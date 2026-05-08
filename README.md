@@ -3,6 +3,8 @@
 ## Loyihaning Maqsadi
 Atoyo ERP - bu korxonalar uchun mo'ljallangan, resurslarni boshqarish tizimi. Ushbu loyiha korxonalarning samaradorligini oshirish va jarayonlarni avtomatlashtirishga qaratilgan.
 
+## Loyihani ishlab chiqaruvchi [Abdullohkhan](https://t.me/Abdulloh_77700)
+
 ## Asosiy Xususiyatlar
 - **Modul tizimi**: Har bir bo'lim uchun alohida modullar.
 - **Ma'lumotlar tahlili**: Real vaqt rejimida ma'lumotlarni tahlil qilish imkoniyati.
@@ -14,7 +16,7 @@ Atoyo ERP - bu korxonalar uchun mo'ljallangan, resurslarni boshqarish tizimi. Us
 3. Tizimga kirish va foydalanishni boshlang.
 
 ## Aloqa
-Agar sizda savollar yoki takliflar bo'lsa, iltimos, biz bilan bog'laning: [email@example.com](mailto:email@example.com)
+Agar sizda savollar yoki takliflar bo'lsa, iltimos, biz bilan bog'laning: [abdulmajidsharipovlc@gmail.com](mailto:abdulmajidsharipovlc@gmail.com)
 
 ## Litsenziya
 Ushbu loyiha MIT litsenziyasi ostida tarqatiladi.
