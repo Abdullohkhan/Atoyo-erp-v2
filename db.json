@@ -1,0 +1,719 @@
+{
+  "products": [
+    {
+      "id": "p1",
+      "code": "MAH-001",
+      "name": "Santexnika quvuri 32mm",
+      "unit": "dona",
+      "category": "building",
+      "price": 45000,
+      "costPrice": 32000,
+      "barcode": "4600001234567",
+      "isActive": true,
+      "createdAt": "2025-01-10T08:00:00Z",
+      "updatedAt": "2025-01-10T08:00:00Z"
+    },
+    {
+      "id": "p2",
+      "code": "MAH-002",
+      "name": "Suv krани 1/2\"",
+      "unit": "dona",
+      "category": "building",
+      "price": 85000,
+      "costPrice": 60000,
+      "barcode": "4600001234568",
+      "isActive": true,
+      "createdAt": "2025-01-10T08:00:00Z",
+      "updatedAt": "2025-01-10T08:00:00Z"
+    },
+    {
+      "id": "p3",
+      "code": "MAH-003",
+      "name": "Suv o'lchagich",
+      "unit": "dona",
+      "category": "building",
+      "price": 120000,
+      "costPrice": 85000,
+      "isActive": true,
+      "createdAt": "2025-01-10T08:00:00Z",
+      "updatedAt": "2025-01-10T08:00:00Z"
+    },
+    {
+      "id": "p4",
+      "code": "MAH-004",
+      "name": "Radiator 6 seksiyali",
+      "unit": "dona",
+      "category": "building",
+      "price": 650000,
+      "costPrice": 480000,
+      "isActive": true,
+      "createdAt": "2025-01-10T08:00:00Z",
+      "updatedAt": "2025-01-10T08:00:00Z"
+    },
+    {
+      "id": "p5",
+      "code": "MAH-005",
+      "name": "Suv nasoси 0.5kW",
+      "unit": "dona",
+      "category": "electronics",
+      "price": 980000,
+      "costPrice": 720000,
+      "isActive": true,
+      "createdAt": "2025-01-10T08:00:00Z",
+      "updatedAt": "2025-01-10T08:00:00Z"
+    },
+    {
+      "id": "p6",
+      "code": "MAH-006",
+      "name": "Shlang 1/2\" 10m",
+      "unit": "dona",
+      "category": "building",
+      "price": 35000,
+      "costPrice": 24000,
+      "isActive": true,
+      "createdAt": "2025-01-10T08:00:00Z",
+      "updatedAt": "2025-01-10T08:00:00Z"
+    },
+    {
+      "id": "p7",
+      "code": "MAH-007",
+      "name": "Filtr uy uchun",
+      "unit": "dona",
+      "category": "building",
+      "price": 180000,
+      "costPrice": 130000,
+      "isActive": true,
+      "createdAt": "2025-01-10T08:00:00Z",
+      "updatedAt": "2025-01-10T08:00:00Z"
+    },
+    {
+      "id": "p8",
+      "code": "MAH-008",
+      "name": "Muftа 32mm",
+      "unit": "dona",
+      "category": "building",
+      "price": 8000,
+      "costPrice": 5500,
+      "isActive": true,
+      "createdAt": "2025-01-10T08:00:00Z",
+      "updatedAt": "2025-01-10T08:00:00Z"
+    }
+  ],
+  "customers": [
+    {
+      "id": "c1",
+      "code": "MIJ-001",
+      "name": "Alisher Karimov",
+      "phone": "+998 90 123 45 67",
+      "email": "alisher@gmail.com",
+      "address": "Toshkent, Yunusobod",
+      "inn": "",
+      "debt": 420000,
+      "totalPurchases": 8500000,
+      "isActive": true,
+      "createdAt": "2025-02-01T09:00:00Z"
+    },
+    {
+      "id": "c2",
+      "code": "MIJ-002",
+      "name": "Dilnoza Yusupova",
+      "phone": "+998 91 234 56 78",
+      "email": "dilnoza@mail.uz",
+      "address": "Toshkent, Chilonzor",
+      "inn": "",
+      "debt": 0,
+      "totalPurchases": 3200000,
+      "isActive": true,
+      "createdAt": "2025-02-05T09:00:00Z"
+    },
+    {
+      "id": "c3",
+      "code": "MIJ-003",
+      "name": "Bobur Toshmatov",
+      "phone": "+998 93 345 67 89",
+      "address": "Samarqand sh.",
+      "inn": "123456789",
+      "debt": 1200000,
+      "totalPurchases": 15600000,
+      "isActive": true,
+      "createdAt": "2025-02-10T09:00:00Z"
+    },
+    {
+      "id": "c4",
+      "code": "MIJ-004",
+      "name": "Gulnora Nazarova",
+      "phone": "+998 94 456 78 90",
+      "address": "Andijon sh.",
+      "inn": "",
+      "debt": 0,
+      "totalPurchases": 2100000,
+      "isActive": true,
+      "createdAt": "2025-03-01T09:00:00Z"
+    },
+    {
+      "id": "c5",
+      "code": "MIJ-005",
+      "name": "Jahongir Raximov",
+      "phone": "+998 97 567 89 01",
+      "address": "Namangan sh.",
+      "inn": "987654321",
+      "debt": 580000,
+      "totalPurchases": 9800000,
+      "isActive": true,
+      "createdAt": "2025-03-15T09:00:00Z"
+    }
+  ],
+  "suppliers": [
+    {
+      "id": "s1",
+      "code": "YET-001",
+      "name": "Toshkent Santexnika Zavodi",
+      "phone": "+998 71 234 56 78",
+      "email": "info@tsz.uz",
+      "address": "Toshkent, Sergeli",
+      "inn": "200123456",
+      "balance": -2500000,
+      "totalSupplied": 48000000,
+      "isActive": true,
+      "createdAt": "2025-01-05T08:00:00Z"
+    },
+    {
+      "id": "s2",
+      "code": "YET-002",
+      "name": "Samarqand Import MChJ",
+      "phone": "+998 66 345 67 89",
+      "email": "samarkandimport@gmail.com",
+      "address": "Samarqand sh.",
+      "inn": "200234567",
+      "balance": 0,
+      "totalSupplied": 22000000,
+      "isActive": true,
+      "createdAt": "2025-01-10T08:00:00Z"
+    },
+    {
+      "id": "s3",
+      "code": "YET-003",
+      "name": "China Trade LLC",
+      "phone": "+998 90 456 78 90",
+      "address": "Toshkent, Uchtepa",
+      "inn": "200345678",
+      "balance": -800000,
+      "totalSupplied": 35000000,
+      "isActive": true,
+      "createdAt": "2025-02-01T08:00:00Z"
+    }
+  ],
+  "employees": [
+    {
+      "id": "e1",
+      "code": "XOD-001",
+      "fullName": "Abdullayev Sardor Baxtiyorovich",
+      "position": "Direktor",
+      "department": "Boshqaruv",
+      "salary": 8000000,
+      "phone": "+998 90 111 22 33",
+      "hireDate": "2023-01-01",
+      "isActive": true,
+      "createdAt": "2023-01-01T08:00:00Z"
+    },
+    {
+      "id": "e2",
+      "code": "XOD-002",
+      "fullName": "Xasanova Munira Aliyevna",
+      "position": "Bosh buxgalter",
+      "department": "Moliya",
+      "salary": 5500000,
+      "phone": "+998 91 222 33 44",
+      "hireDate": "2023-02-01",
+      "isActive": true,
+      "createdAt": "2023-02-01T08:00:00Z"
+    },
+    {
+      "id": "e3",
+      "code": "XOD-003",
+      "fullName": "Tursunov Jasur Hamidovich",
+      "position": "Savdo menejeri",
+      "department": "Savdo",
+      "salary": 4200000,
+      "phone": "+998 93 333 44 55",
+      "hireDate": "2023-03-15",
+      "isActive": true,
+      "createdAt": "2023-03-15T08:00:00Z"
+    },
+    {
+      "id": "e4",
+      "code": "XOD-004",
+      "fullName": "Karimova Zulfiya Rustamovna",
+      "position": "Omborchi",
+      "department": "Logistika",
+      "salary": 3500000,
+      "phone": "+998 94 444 55 66",
+      "hireDate": "2023-05-01",
+      "isActive": true,
+      "createdAt": "2023-05-01T08:00:00Z"
+    }
+  ],
+  "warehouses": [
+    {
+      "id": "w1",
+      "code": "OMB-001",
+      "name": "Asosiy ombor",
+      "address": "Toshkent, Sergeli t., Bog'ishamol ko'chasi 12",
+      "manager": "Karimova Zulfiya",
+      "isActive": true,
+      "createdAt": "2023-01-01T08:00:00Z"
+    },
+    {
+      "id": "w2",
+      "code": "OMB-002",
+      "name": "Filial ombori",
+      "address": "Toshkent, Chilonzor t.",
+      "manager": "Tursunov Jasur",
+      "isActive": true,
+      "createdAt": "2023-06-01T08:00:00Z"
+    }
+  ],
+  "saleOrders": [
+    {
+      "id": "so1",
+      "number": "SAV-000039",
+      "date": "2025-07-12",
+      "customerId": "c5",
+      "customerName": "Jahongir Raximov",
+      "warehouseId": "w1",
+      "warehouseName": "Asosiy ombor",
+      "items": [
+        {
+          "productId": "p4",
+          "productName": "Radiator 6 seksiyali",
+          "unit": "dona",
+          "qty": 3,
+          "price": 650000,
+          "discount": 0,
+          "sum": 1950000
+        },
+        {
+          "productId": "p5",
+          "productName": "Suv nasosi 0.5kW",
+          "unit": "dona",
+          "qty": 1,
+          "price": 980000,
+          "discount": 0,
+          "sum": 980000
+        }
+      ],
+      "status": "completed",
+      "total": 2930000,
+      "paid": 2930000,
+      "balance": 0,
+      "createdAt": "2025-07-12T10:00:00Z",
+      "updatedAt": "2025-07-12T15:00:00Z"
+    },
+    {
+      "id": "so2",
+      "number": "SAV-000040",
+      "date": "2025-07-13",
+      "customerId": "c2",
+      "customerName": "Dilnoza Yusupova",
+      "warehouseId": "w1",
+      "warehouseName": "Asosiy ombor",
+      "items": [
+        {
+          "productId": "p1",
+          "productName": "Santexnika quvuri 32mm",
+          "unit": "dona",
+          "qty": 10,
+          "price": 45000,
+          "discount": 0,
+          "sum": 450000
+        },
+        {
+          "productId": "p2",
+          "productName": "Suv krani 1/2\"",
+          "unit": "dona",
+          "qty": 5,
+          "price": 85000,
+          "discount": 0,
+          "sum": 425000
+        }
+      ],
+      "status": "draft",
+      "total": 875000,
+      "paid": 0,
+      "balance": 875000,
+      "createdAt": "2025-07-13T09:00:00Z",
+      "updatedAt": "2025-07-13T09:00:00Z"
+    },
+    {
+      "id": "so3",
+      "number": "SAV-000041",
+      "date": "2025-07-14",
+      "customerId": "c1",
+      "customerName": "Alisher Karimov",
+      "warehouseId": "w1",
+      "warehouseName": "Asosiy ombor",
+      "items": [
+        {
+          "productId": "p3",
+          "productName": "Suv o'lchagich",
+          "unit": "dona",
+          "qty": 20,
+          "price": 120000,
+          "discount": 5,
+          "sum": 2280000
+        },
+        {
+          "productId": "p7",
+          "productName": "Filtr uy uchun",
+          "unit": "dona",
+          "qty": 10,
+          "price": 180000,
+          "discount": 0,
+          "sum": 1800000
+        }
+      ],
+      "status": "confirmed",
+      "total": 4080000,
+      "paid": 3000000,
+      "balance": 1080000,
+      "createdAt": "2025-07-14T11:00:00Z",
+      "updatedAt": "2025-07-14T11:00:00Z"
+    }
+  ],
+  "invoices": [
+    {
+      "id": "inv1",
+      "number": "FAK-000021",
+      "date": "2025-07-12",
+      "type": "sale",
+      "orderId": "so1",
+      "counterpartyId": "c5",
+      "counterpartyName": "Jahongir Raximov",
+      "amount": 2930000,
+      "status": "paid",
+      "dueDate": "2025-07-27",
+      "createdAt": "2025-07-12T15:00:00Z"
+    },
+    {
+      "id": "inv2",
+      "number": "FAK-000022",
+      "date": "2025-07-14",
+      "type": "sale",
+      "orderId": "so3",
+      "counterpartyId": "c1",
+      "counterpartyName": "Alisher Karimov",
+      "amount": 4080000,
+      "status": "partial",
+      "dueDate": "2025-07-28",
+      "createdAt": "2025-07-14T11:00:00Z"
+    }
+  ],
+  "purchaseOrders": [
+    {
+      "id": "po1",
+      "number": "XAR-000027",
+      "date": "2025-07-12",
+      "supplierId": "s2",
+      "supplierName": "Samarqand Import MChJ",
+      "warehouseId": "w1",
+      "warehouseName": "Asosiy ombor",
+      "items": [
+        {
+          "productId": "p4",
+          "productName": "Radiator 6 seksiyali",
+          "unit": "dona",
+          "qty": 10,
+          "price": 480000,
+          "discount": 0,
+          "sum": 4800000
+        },
+        {
+          "productId": "p5",
+          "productName": "Suv nasosi 0.5kW",
+          "unit": "dona",
+          "qty": 8,
+          "price": 720000,
+          "discount": 0,
+          "sum": 5760000
+        }
+      ],
+      "status": "confirmed",
+      "total": 10560000,
+      "paid": 10560000,
+      "balance": 0,
+      "createdAt": "2025-07-12T08:00:00Z",
+      "updatedAt": "2025-07-12T08:00:00Z"
+    },
+    {
+      "id": "po2",
+      "number": "XAR-000028",
+      "date": "2025-07-13",
+      "supplierId": "s1",
+      "supplierName": "Toshkent Santexnika Zavodi",
+      "warehouseId": "w1",
+      "warehouseName": "Asosiy ombor",
+      "items": [
+        {
+          "productId": "p1",
+          "productName": "Santexnika quvuri 32mm",
+          "unit": "dona",
+          "qty": 200,
+          "price": 32000,
+          "discount": 0,
+          "sum": 6400000
+        },
+        {
+          "productId": "p2",
+          "productName": "Suv krani 1/2\"",
+          "unit": "dona",
+          "qty": 100,
+          "price": 60000,
+          "discount": 0,
+          "sum": 6000000
+        }
+      ],
+      "status": "completed",
+      "total": 12400000,
+      "paid": 12400000,
+      "balance": 0,
+      "createdAt": "2025-07-13T08:00:00Z",
+      "updatedAt": "2025-07-13T16:00:00Z"
+    }
+  ],
+  "movements": [
+    {
+      "id": "mv1",
+      "number": "HAR-000015",
+      "date": "2025-07-13",
+      "type": "receipt",
+      "fromWarehouseId": null,
+      "fromWarehouseName": null,
+      "toWarehouseId": "w1",
+      "toWarehouseName": "Asosiy ombor",
+      "items": [
+        {
+          "productId": "p1",
+          "productName": "Santexnika quvuri 32mm",
+          "unit": "dona",
+          "qty": 200,
+          "price": 32000,
+          "discount": 0,
+          "sum": 6400000
+        }
+      ],
+      "status": "completed",
+      "notes": "XAR-000028 bo'yicha kirim",
+      "createdAt": "2025-07-13T16:00:00Z"
+    },
+    {
+      "id": "mv2",
+      "number": "HAR-000016",
+      "date": "2025-07-14",
+      "type": "transfer",
+      "fromWarehouseId": "w1",
+      "fromWarehouseName": "Asosiy ombor",
+      "toWarehouseId": "w2",
+      "toWarehouseName": "Filial ombori",
+      "items": [
+        {
+          "productId": "p6",
+          "productName": "Shlang 1/2\" 10m",
+          "unit": "dona",
+          "qty": 50,
+          "price": 24000,
+          "discount": 0,
+          "sum": 1200000
+        }
+      ],
+      "status": "confirmed",
+      "createdAt": "2025-07-14T10:00:00Z"
+    }
+  ],
+  "stockBalance": [
+    {
+      "id": "sb1",
+      "warehouseId": "w1",
+      "warehouseName": "Asosiy ombor",
+      "productId": "p1",
+      "productName": "Santexnika quvuri 32mm",
+      "productCode": "MAH-001",
+      "unit": "dona",
+      "qty": 188,
+      "reservedQty": 10,
+      "availableQty": 178,
+      "costPrice": 32000,
+      "totalValue": 6016000
+    },
+    {
+      "id": "sb2",
+      "warehouseId": "w1",
+      "warehouseName": "Asosiy ombor",
+      "productId": "p2",
+      "productName": "Suv krani 1/2\"",
+      "productCode": "MAH-002",
+      "unit": "dona",
+      "qty": 95,
+      "reservedQty": 5,
+      "availableQty": 90,
+      "costPrice": 60000,
+      "totalValue": 5700000
+    },
+    {
+      "id": "sb3",
+      "warehouseId": "w1",
+      "warehouseName": "Asosiy ombor",
+      "productId": "p3",
+      "productName": "Suv o'lchagich",
+      "productCode": "MAH-003",
+      "unit": "dona",
+      "qty": 8,
+      "reservedQty": 0,
+      "availableQty": 8,
+      "costPrice": 85000,
+      "totalValue": 680000
+    },
+    {
+      "id": "sb4",
+      "warehouseId": "w1",
+      "warehouseName": "Asosiy ombor",
+      "productId": "p4",
+      "productName": "Radiator 6 seksiyali",
+      "productCode": "MAH-004",
+      "unit": "dona",
+      "qty": 7,
+      "reservedQty": 3,
+      "availableQty": 4,
+      "costPrice": 480000,
+      "totalValue": 3360000
+    },
+    {
+      "id": "sb5",
+      "warehouseId": "w1",
+      "warehouseName": "Asosiy ombor",
+      "productId": "p5",
+      "productName": "Suv nasosi 0.5kW",
+      "productCode": "MAH-005",
+      "unit": "dona",
+      "qty": 5,
+      "reservedQty": 1,
+      "availableQty": 4,
+      "costPrice": 720000,
+      "totalValue": 3600000
+    },
+    {
+      "id": "sb6",
+      "warehouseId": "w2",
+      "warehouseName": "Filial ombori",
+      "productId": "p6",
+      "productName": "Shlang 1/2\" 10m",
+      "productCode": "MAH-006",
+      "unit": "dona",
+      "qty": 50,
+      "reservedQty": 0,
+      "availableQty": 50,
+      "costPrice": 24000,
+      "totalValue": 1200000
+    },
+    {
+      "id": "sb7",
+      "warehouseId": "w1",
+      "warehouseName": "Asosiy ombor",
+      "productId": "p7",
+      "productName": "Filtr uy uchun",
+      "productCode": "MAH-007",
+      "unit": "dona",
+      "qty": 23,
+      "reservedQty": 10,
+      "availableQty": 13,
+      "costPrice": 130000,
+      "totalValue": 2990000
+    }
+  ],
+  "payments": [
+    {
+      "id": "pay1",
+      "number": "TOL-000081",
+      "date": "2025-07-12",
+      "type": "transfer",
+      "direction": "income",
+      "amount": 2930000,
+      "counterpartyId": "c5",
+      "counterpartyName": "Jahongir Raximov",
+      "category": "Savdo to'lovi",
+      "description": "SAV-000039 bo'yicha to'liq to'lov",
+      "createdAt": "2025-07-12T16:00:00Z"
+    },
+    {
+      "id": "pay2",
+      "number": "TOL-000082",
+      "date": "2025-07-13",
+      "type": "transfer",
+      "direction": "expense",
+      "amount": 12400000,
+      "counterpartyId": "s1",
+      "counterpartyName": "Toshkent Santexnika Zavodi",
+      "category": "Xarid to'lovi",
+      "description": "XAR-000028 bo'yicha to'liq to'lov",
+      "createdAt": "2025-07-13T17:00:00Z"
+    },
+    {
+      "id": "pay3",
+      "number": "TOL-000083",
+      "date": "2025-07-14",
+      "type": "cash",
+      "direction": "income",
+      "amount": 3000000,
+      "counterpartyId": "c1",
+      "counterpartyName": "Alisher Karimov",
+      "category": "Savdo to'lovi",
+      "description": "SAV-000041 bo'yicha qisman to'lov",
+      "createdAt": "2025-07-14T12:00:00Z"
+    },
+    {
+      "id": "pay4",
+      "number": "TOL-000084",
+      "date": "2025-07-14",
+      "type": "cash",
+      "direction": "expense",
+      "amount": 850000,
+      "category": "Maosh",
+      "description": "Iyul oyiga avans",
+      "createdAt": "2025-07-14T14:00:00Z"
+    }
+  ],
+  "users": [
+    {
+      "id": "u1",
+      "username": "admin",
+      "password": "admin123",
+      "role": "owner",
+      "name": "Administrator",
+      "isActive": true
+    },
+    {
+      "id": "u2",
+      "username": "seller1",
+      "password": "seller123",
+      "role": "seller",
+      "name": "Tursunov Jasur",
+      "isActive": true
+    },
+    {
+      "id": "u3",
+      "username": "seller2",
+      "password": "sell456",
+      "role": "seller",
+      "name": "Nazarova Gulnora",
+      "isActive": true
+    },
+    {
+      "id": "u4",
+      "username": "accountant",
+      "password": "acc123",
+      "role": "accountant",
+      "name": "Xasanova Munira",
+      "isActive": true
+    }
+  ],
+  "receipts": []
+}
