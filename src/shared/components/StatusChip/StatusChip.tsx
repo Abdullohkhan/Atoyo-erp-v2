@@ -1,4 +1,6 @@
 import { Chip } from '@mui/material'
+import { useTranslation } from 'react-i18next'
+import { STATUS_LABELS } from '@/shared/constants'
 import type { DocumentStatus } from '@/shared/types/document.types'
 
 const config: Record<string, { label: string; color: 'default' | 'warning' | 'success' | 'error' | 'info' }> = {
@@ -14,6 +16,7 @@ const config: Record<string, { label: string; color: 'default' | 'warning' | 'su
 interface Props { status: DocumentStatus | string; size?: 'small' | 'medium' }
 
 export default function StatusChip({ status, size = 'small' }: Props) {
+  const { t } = useTranslation()
   const cfg = config[status] ?? { label: status, color: 'default' as const }
-  return <Chip label={cfg.label} color={cfg.color} size={size} sx={{ fontWeight: 600, borderRadius: '8px' }} />
+  return <Chip label={t(STATUS_LABELS[status] ?? cfg.label)} color={cfg.color} size={size} sx={{ fontWeight: 600, borderRadius: '8px' }} />
 }

@@ -9,7 +9,9 @@
     "dev:api": "json-server --watch db.json --port 3001",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest run",
+    "typecheck": "tsc -b"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -23,15 +25,17 @@
     "axios": "^1.16.0",
     "concurrently": "^10.0.6",
     "dayjs": "^1.11.20",
+    "exceljs": "^4.4.0",
     "gsap": "^3.15.0",
+    "i18next": "^26.4.4",
     "motion": "^14.1.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "react-i18next": "^17.0.16",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.15.0",
     "recharts": "^3.8.1",
     "tailwindcss": "^4.2.4",
-    "xlsx": "^0.18.5",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -47,6 +51,7 @@
     "json-server": "^0.17.4",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.59.2",
-    "vite": "^8.0.11"
+    "vite": "^8.0.11",
+    "vitest": "^5.0.4"
   }
 }

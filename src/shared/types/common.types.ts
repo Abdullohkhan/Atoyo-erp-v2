@@ -10,6 +10,8 @@ export interface TableColumn<T> {
   minWidth?: number
   align?: 'left' | 'right' | 'center'
   format?: (value: unknown, row: T) => React.ReactNode
+  /** Plain value written to Excel; defaults to the raw cell value. */
+  exportValue?: (row: T) => string | number | boolean | null | undefined
 }
 
 export interface PaginationState {

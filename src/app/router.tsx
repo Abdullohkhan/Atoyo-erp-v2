@@ -1,48 +1,65 @@
+import { Suspense, lazy, type ComponentType, type ReactNode } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
+import PageLoader from '@/shared/components/PageLoader/PageLoader'
 import AppLayout from '@/shared/components/Layout/AppLayout'
 import ProtectedRoute from '@/features/auth/ProtectedRoute'
 import LoginPage from '@/features/auth/LoginPage'
-import DashboardPage from '@/features/dashboard/DashboardPage'
-import ProductsPage from '@/features/catalogs/products/ProductsPage'
-import CustomersPage from '@/features/catalogs/customers/CustomersPage'
-import CustomerDetailPage from '@/features/catalogs/customers/CustomerDetailPage'
-import SuppliersPage from '@/features/catalogs/suppliers/SuppliersPage'
-import EmployeesPage from '@/features/catalogs/employees/EmployeesPage'
-import WarehousesPage from '@/features/catalogs/warehouses/WarehousesPage'
-import SaleOrdersPage from '@/features/sales/orders/SaleOrdersPage'
-import NewOrderPage from '@/features/sales/neworder/NewOrderPage'
-import InvoicesPage from '@/features/sales/invoices/InvoicesPage'
-import PurchaseOrdersPage from '@/features/purchases/orders/PurchaseOrdersPage'
-import ReceiptPage from '@/features/purchases/receipts/ReceiptPage'
-import WarehouseBalancePage from '@/features/warehouse/balance/WarehouseBalancePage'
-import MovementsPage from '@/features/warehouse/movements/MovementsPage'
-import PaymentsPage from '@/features/finance/payments/PaymentsPage'
-import SalesReportPage from '@/features/reports/sales/SalesReportPage'
-import StockReportPage from '@/features/reports/stock/StockReportPage'
+import RouteError from '@/shared/components/RouteError/RouteError'
+import { ROUTE_ACCESS } from './permissions'
+
+// Pages are split into separate chunks and loaded on first visit.
+const page = (loader: () => Promise<{ default: ComponentType }>) => lazy(loader)
+const Dashboard = page(() => import('@/features/dashboard/DashboardPage'))
+const Products = page(() => import('@/features/catalogs/products/ProductsPage'))
+const Customers = page(() => import('@/features/catalogs/customers/CustomersPage'))
+const CustomerDetail = page(() => import('@/features/catalogs/customers/CustomerDetailPage'))
+const Suppliers = page(() => import('@/features/catalogs/suppliers/SuppliersPage'))
+const Employees = page(() => import('@/features/catalogs/employees/EmployeesPage'))
+const Warehouses = page(() => import('@/features/catalogs/warehouses/WarehousesPage'))
+const SaleOrders = page(() => import('@/features/sales/orders/SaleOrdersPage'))
+const NewOrder = page(() => import('@/features/sales/neworder/NewOrderPage'))
+const Invoices = page(() => import('@/features/sales/invoices/InvoicesPage'))
+const PurchaseOrders = page(() => import('@/features/purchases/orders/PurchaseOrdersPage'))
+const Receipt = page(() => import('@/features/purchases/receipts/ReceiptPage'))
+const WarehouseBalance = page(() => import('@/features/warehouse/balance/WarehouseBalancePage'))
+const Movements = page(() => import('@/features/warehouse/movements/MovementsPage'))
+const Payments = page(() => import('@/features/finance/payments/PaymentsPage'))
+const SalesReport = page(() => import('@/features/reports/sales/SalesReportPage'))
+const StockReport = page(() => import('@/features/reports/stock/StockReportPage'))
+
+const guard = (path: keyof typeof ROUTE_ACCESS, Page: ComponentType): { path?: string; index?: boolean; element: ReactNode } => ({
+  ...(path === '/' ? { index: true } : { path: path.slice(1) }),
+  element: (
+    <ProtectedRoute allowedRoles={ROUTE_ACCESS[path]}>
+      <Suspense fallback={<PageLoader />}><Page /></Suspense>
+    </ProtectedRoute>
+  ),
+})
 
 export const router = createBrowserRouter([
-  { path: '/login', element: <LoginPage /> },
+  { path: '/login', element: <LoginPage />, errorElement: <RouteError /> },
   {
     path: '/',
     element: <ProtectedRoute><AppLayout /></ProtectedRoute>,
+    errorElement: <RouteError />,
     children: [
-      { index: true, element: <DashboardPage /> },
-      { path: 'catalogs/products',         element: <ProductsPage /> },
-      { path: 'catalogs/customers',        element: <CustomersPage /> },
-      { path: 'catalogs/customers/:id',    element: <CustomerDetailPage /> },
-      { path: 'catalogs/suppliers',        element: <SuppliersPage /> },
-      { path: 'catalogs/employees',        element: <EmployeesPage /> },
-      { path: 'catalogs/warehouses',       element: <WarehousesPage /> },
-      { path: 'sales/orders',              element: <SaleOrdersPage /> },
-      { path: 'sales/orders/new',          element: <NewOrderPage /> },
-      { path: 'sales/invoices',            element: <InvoicesPage /> },
-      { path: 'purchases/orders',          element: <PurchaseOrdersPage /> },
-      { path: 'purchases/receipts/new',    element: <ReceiptPage /> },
-      { path: 'warehouse/balance',         element: <WarehouseBalancePage /> },
-      { path: 'warehouse/movements',       element: <MovementsPage /> },
-      { path: 'finance/payments',          element: <PaymentsPage /> },
-      { path: 'reports/sales',             element: <SalesReportPage /> },
-      { path: 'reports/stock',             element: <StockReportPage /> },
+      guard('/', Dashboard),
+      guard('/catalogs/products', Products),
+      guard('/catalogs/customers', Customers),
+      guard('/catalogs/customers/:id', CustomerDetail),
+      guard('/catalogs/suppliers', Suppliers),
+      guard('/catalogs/employees', Employees),
+      guard('/catalogs/warehouses', Warehouses),
+      guard('/sales/orders', SaleOrders),
+      guard('/sales/orders/new', NewOrder),
+      guard('/sales/invoices', Invoices),
+      guard('/purchases/orders', PurchaseOrders),
+      guard('/purchases/receipts/new', Receipt),
+      guard('/warehouse/balance', WarehouseBalance),
+      guard('/warehouse/movements', Movements),
+      guard('/finance/payments', Payments),
+      guard('/reports/sales', SalesReport),
+      guard('/reports/stock', StockReport),
     ],
   },
   { path: '*', element: <Navigate to="/" replace /> },
