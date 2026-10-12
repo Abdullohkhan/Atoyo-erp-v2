@@ -1,7 +1,8 @@
 import { Card, Box, Typography, Avatar } from '@mui/material'
-import { motion } from 'framer-motion'
+import { motion } from 'motion/react'
 import { TrendingUp, TrendingDown } from '@mui/icons-material'
 import type { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface Props {
   title: string
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export default function KpiCard({ title, value, change, icon, color, index = 0 }: Props) {
+  const { t } = useTranslation()
   const isPositive = (change ?? 0) >= 0
   return (
     <motion.div
@@ -26,14 +28,14 @@ export default function KpiCard({ title, value, change, icon, color, index = 0 }
             <Typography variant="caption" color="text.secondary" sx={{  textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: '0.7rem' , fontWeight: 600 }}>
               {title}
             </Typography>
-            <Typography variant="h5" sx={{  mt: 0.5, mb: 0.5 , fontWeight: 800 }}>
+            <Typography variant="h6" sx={{ mt: 0.5, mb: 0.5, fontWeight: 800, wordBreak: 'break-word' }}>
               {value}
             </Typography>
             {change !== undefined && (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.4 }}>
                 {isPositive ? <TrendingUp sx={{ fontSize: 14, color: 'success.main' }} /> : <TrendingDown sx={{ fontSize: 14, color: 'error.main' }} />}
                 <Typography variant="caption" sx={{ color: isPositive ? 'success.main' : 'error.main', fontWeight: 700 }}>
-                  {Math.abs(change)}% o'tgan oyga nisbatan
+                  {Math.abs(change)}% {t("o'tgan oyga nisbatan")}
                 </Typography>
               </Box>
             )}

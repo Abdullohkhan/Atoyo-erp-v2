@@ -10,6 +10,8 @@ export interface DocumentItem {
   price: number
   discount: number
   sum: number
+  /** Retail price set on goods receipt (purchases only). */
+  salePrice?: number
 }
 
 export interface SaleOrder {

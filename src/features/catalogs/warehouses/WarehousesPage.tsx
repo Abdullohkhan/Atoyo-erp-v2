@@ -1,79 +1,64 @@
-import { Button, IconButton, Tooltip, Box, Chip, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Grid } from '@mui/material'
-import { Add, Edit, Delete } from '@mui/icons-material'
-import { useEffect, useState } from 'react'
-import { useForm, Controller } from 'react-hook-form'
+import { Button } from '@mui/material'
+import { Add } from '@mui/icons-material'
+import { useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { z } from 'zod'
 import AnimatedPage from '@/shared/components/AnimatedPage/AnimatedPage'
 import PageHeader from '@/shared/components/PageHeader/PageHeader'
 import DataTable from '@/shared/components/DataTable/DataTable'
 import ConfirmDialog from '@/shared/components/ConfirmDialog/ConfirmDialog'
-import { useAppDispatch, useAppSelector } from '@/app/hooks'
+import CrudDialog, { type FieldDef } from '@/shared/components/CrudDialog/CrudDialog'
+import RowActions, { ActiveChip } from '@/shared/components/RowActions/RowActions'
+import { useAppDispatch, useAppSelector, useCan } from '@/app/hooks'
 import { fetchWarehouses, createWarehouse, updateWarehouse, deleteWarehouse } from './store/warehousesSlice'
 import type { Warehouse } from '@/shared/types/catalog.types'
 import { generateId } from '@/shared/utils/formatters'
+import { reqStr, optStr } from '@/shared/utils/validation'
 import type { TableColumn } from '@/shared/types/common.types'
+import { useCatalog } from '../useCatalog'
 
-const COLUMNS: TableColumn<Warehouse>[] = [
-  { id: 'code', label: 'Kod', minWidth: 80 },
-  { id: 'name', label: 'Nomi', minWidth: 200 },
-  { id: 'address', label: 'Manzil', minWidth: 200 },
-  { id: 'manager', label: 'Mas\'ul', minWidth: 150 },
-  { id: 'isActive', label: 'Holat', minWidth: 80, format: (v) => <Chip label={v ? 'Faol' : 'Nofaol'} color={v ? 'success' : 'default'} size="small" sx={{ borderRadius: 1 }} /> },
+const schema = z.object({ code: reqStr(), name: reqStr(2), address: optStr, manager: optStr, isActive: z.boolean() })
+const FIELDS: FieldDef[] = [
+  { name: 'code', label: 'Kod', xs: 4 }, { name: 'name', label: 'Nomi', xs: 8 },
+  { name: 'address', label: 'Manzil', xs: 8 }, { name: 'manager', label: "Mas'ul", xs: 4 },
+  { name: 'isActive', label: 'Faol', type: 'switch' },
 ]
+const EMPTY = { code: '', name: '', address: '', manager: '', isActive: true }
 
 export default function WarehousesPage() {
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
   const { items, loading } = useAppSelector((s) => s.warehouses)
-  const [open, setOpen] = useState(false)
-  const [editing, setEditing] = useState<Warehouse | null>(null)
-  const [deleting, setDeleting] = useState<Warehouse | null>(null)
-  const { control, handleSubmit, reset } = useForm<Partial<Warehouse>>()
-
+  const canWrite = useCan('warehouses.write')
   useEffect(() => { dispatch(fetchWarehouses()) }, [dispatch])
-  const openCreate = () => { reset({ isActive: true }); setEditing(null); setOpen(true) }
-  const openEdit = (w: Warehouse) => { reset(w); setEditing(w); setOpen(true) }
 
-  const onSubmit = async (data: Partial<Warehouse>) => {
-    if (editing) await dispatch(updateWarehouse({ id: editing.id, data }))
-    else await dispatch(createWarehouse({ id: generateId(), ...data, isActive: true, createdAt: new Date().toISOString() } as any))
-    setOpen(false)
-  }
+  const cat = useCatalog<Warehouse>({
+    create: (d) => dispatch(createWarehouse({ id: generateId(), ...d, createdAt: new Date().toISOString() } as Warehouse)).unwrap(),
+    update: (id, d) => dispatch(updateWarehouse({ id, data: d })).unwrap(),
+    remove: (id) => dispatch(deleteWarehouse(id)).unwrap(),
+  })
+
+  const columns = useMemo<TableColumn<Warehouse>[]>(() => [
+    { id: 'code', label: 'Kod', minWidth: 80 },
+    { id: 'name', label: 'Nomi', minWidth: 200 },
+    { id: 'address', label: 'Manzil', minWidth: 200 },
+    { id: 'manager', label: "Mas'ul", minWidth: 150 },
+    { id: 'isActive', label: 'Holat', minWidth: 80, format: (v) => <ActiveChip active={v} />, exportValue: (r) => (r.isActive ? t('Faol') : t('Nofaol')) },
+  ], [t])
+  const defaults = useMemo(() => (cat.editing ?? EMPTY) as unknown as Record<string, unknown>, [cat.editing])
 
   return (
     <AnimatedPage>
-      <PageHeader title="Omborlar" subtitle={`Jami: ${items.length}`}
+      <PageHeader title="Omborlar" subtitle={t('Jami: {{count}}', { count: items.length })}
         breadcrumbs={[{ label: 'Kataloglar' }, { label: 'Omborlar' }]}
-        actions={<Button variant="contained" startIcon={<Add />} onClick={openCreate}>Qo'shish</Button>}
+        actions={canWrite && <Button variant="contained" startIcon={<Add />} onClick={cat.openCreate}>{t("Qo'shish")}</Button>}
       />
-      <DataTable columns={COLUMNS} rows={items} loading={loading} searchable searchPlaceholder="Ombor qidirish..."
-        rowActions={(row) => (
-          <Box sx={{ display: 'flex', gap: 0.5 }}>
-            <Tooltip title="Tahrirlash"><IconButton size="small" onClick={() => openEdit(row)}><Edit fontSize="small" /></IconButton></Tooltip>
-            <Tooltip title="O'chirish"><IconButton size="small" color="error" onClick={() => setDeleting(row)}><Delete fontSize="small" /></IconButton></Tooltip>
-          </Box>
-        )}
-      />
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ fontWeight: 700 }}>{editing ? 'Tahrirlash' : 'Yangi ombor'}</DialogTitle>
-        <DialogContent sx={{ pt: 2 }}>
-          <Grid container spacing={2} sx={{ mt: 0 }}>
-            {[{ name: 'code', label: 'Kod', xs: 4 }, { name: 'name', label: 'Nomi', xs: 8 },
-              { name: 'address', label: 'Manzil', xs: 12 }, { name: 'manager', label: "Mas'ul shaxs", xs: 12 }].map(({ name, label, xs }) => (
-              <Grid key={name} size={{ xs: 12, sm: xs }}>
-                <Controller name={name as keyof Warehouse} control={control} render={({ field }) => (
-                  <TextField {...field} value={field.value ?? ''} label={label} fullWidth size="small" />
-                )} />
-              </Grid>
-            ))}
-          </Grid>
-        </DialogContent>
-        <DialogActions sx={{ p: 2, gap: 1 }}>
-          <Button onClick={() => setOpen(false)} variant="outlined" color="inherit">Bekor</Button>
-          <Button onClick={handleSubmit(onSubmit)} variant="contained">Saqlash</Button>
-        </DialogActions>
-      </Dialog>
-      <ConfirmDialog open={!!deleting} message={`"${deleting?.name}" omborini o'chirasizmi?`}
-        onConfirm={async () => { if (deleting) { await dispatch(deleteWarehouse(deleting.id)); setDeleting(null) } }}
-        onClose={() => setDeleting(null)} />
+      <DataTable columns={columns} rows={items} loading={loading} searchable exportName="omborlar" searchPlaceholder="Ombor qidirish..."
+        rowActions={canWrite ? (row) => <RowActions onEdit={() => cat.openEdit(row)} onDelete={() => cat.setDeleting(row)} /> : undefined} />
+      <CrudDialog open={cat.open} title={cat.editing ? 'Tahrirlash' : 'Yangi ombor'} fields={FIELDS}
+        schema={schema} defaultValues={defaults} onClose={cat.close} onSubmit={cat.submit} />
+      <ConfirmDialog open={!!cat.deleting} message={t('"{{name}}" omborini o\'chirasizmi?', { name: cat.deleting?.name })}
+        onConfirm={cat.confirmDelete} onClose={() => cat.setDeleting(null)} />
     </AnimatedPage>
   )
 }

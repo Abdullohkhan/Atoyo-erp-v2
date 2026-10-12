@@ -1,11 +1,12 @@
-import { Box, useMediaQuery, useTheme, Drawer } from '@mui/material'
+import { Box, useMediaQuery, useTheme, Drawer, Snackbar, Alert } from '@mui/material'
 import { useState, useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'motion/react'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
 import ProductSearchModal from '@/shared/components/ProductSearchModal/ProductSearchModal'
-import { useAppDispatch } from '@/app/hooks'
+import { useAppDispatch, useAppSelector } from '@/app/hooks'
+import { closeToast } from '@/app/uiSlice'
 import { fetchProducts } from '@/features/catalogs/products/store/productsSlice'
 
 export default function AppLayout() {
@@ -15,6 +16,7 @@ export default function AppLayout() {
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const toast = useAppSelector((s) => s.ui.toast)
 
   useEffect(() => { dispatch(fetchProducts()) }, [dispatch])
 
@@ -43,7 +45,7 @@ export default function AppLayout() {
           open={mobileOpen} onClose={() => setMobileOpen(false)}
           sx={{ '& .MuiDrawer-paper': { width: 260 } }}
         >
-          <Sidebar collapsed={false} />
+          <Sidebar collapsed={false} onNavigate={() => setMobileOpen(false)} />
         </Drawer>
       )}
 
@@ -58,6 +60,13 @@ export default function AppLayout() {
           </AnimatePresence>
         </Box>
       </Box>
+
+      <Snackbar key={toast?.id} open={!!toast} autoHideDuration={4000} onClose={(_, reason) => { if (reason !== 'clickaway') dispatch(closeToast()) }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+        <Alert severity={toast?.severity ?? 'success'} variant="filled" onClose={() => dispatch(closeToast())} sx={{ width: '100%', borderRadius: 2 }}>
+          {toast?.message}
+        </Alert>
+      </Snackbar>
 
       {/* Global product search */}
       <ProductSearchModal

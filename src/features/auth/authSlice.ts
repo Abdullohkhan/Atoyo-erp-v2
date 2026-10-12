@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import api from '@/lib/axios'
+import i18n from '@/i18n'
 
 export type UserRole = 'owner' | 'seller' | 'accountant'
 
@@ -10,50 +11,61 @@ export interface AuthUser {
   role: UserRole
 }
 
+interface StoredUser extends AuthUser {
+  password: string
+  isActive: boolean
+}
+
 interface AuthState {
   user: AuthUser | null
   loading: boolean
   error: string | null
 }
 
-const saved = localStorage.getItem('auth_user')
-const initialUser: AuthUser | null = saved ? JSON.parse(saved) : null
+const ROLES: UserRole[] = ['owner', 'seller', 'accountant']
 
-export const loginUser = createAsyncThunk(
+const readSavedUser = (): AuthUser | null => {
+  try {
+    const raw = localStorage.getItem('auth_user')
+    if (!raw) return null
+    const u = JSON.parse(raw) as Partial<AuthUser>
+    if (u && typeof u.id === 'string' && typeof u.name === 'string' && ROLES.includes(u.role as UserRole)) return u as AuthUser
+  } catch { /* corrupted or unavailable storage */ }
+  return null
+}
+
+// NOTE: demo-only authentication against json-server. A real backend must verify the
+// password server-side (hashed) and return a token; the client must never see passwords.
+export const loginUser = createAsyncThunk<AuthUser, { username: string; password: string }, { rejectValue: string }>(
   'auth/login',
-  async ({ username, password }: { username: string; password: string }, { rejectWithValue }) => {
-    const res = await api.get<Array<AuthUser & { password: string; isActive: boolean }>>(
-      `/users?username=${username}`,
-    )
-    const users = res.data
-    const user = Array.isArray(users) ? users[0] : null
-    if (!user || (user as any).password !== password) return rejectWithValue("Login yoki parol noto'g'ri")
-    if (!(user as any).isActive) return rejectWithValue('Foydalanuvchi bloklangan')
-    const { password: _pw, isActive: _ia, ...safe } = user as any
-    return safe as AuthUser
+  async ({ username, password }, { rejectWithValue }) => {
+    const res = await api.get<StoredUser[]>(`/users?username=${encodeURIComponent(username.trim())}`)
+    const user = res.data[0]
+    if (!user || user.password !== password) return rejectWithValue(i18n.t("Login yoki parol noto'g'ri"))
+    if (!user.isActive) return rejectWithValue(i18n.t('Foydalanuvchi bloklangan'))
+    return { id: user.id, username: user.username, name: user.name, role: user.role }
   },
 )
 
-export const changePassword = createAsyncThunk(
+export const changePassword = createAsyncThunk<boolean, { userId: string; oldPass: string; newPass: string }, { rejectValue: string }>(
   'auth/changePassword',
-  async (
-    { userId, oldPass, newPass }: { userId: string; oldPass: string; newPass: string },
-    { rejectWithValue },
-  ) => {
-    const res = await api.get<{ id: string; password: string }>(`/users/${userId}`)
-    if ((res.data as any).password !== oldPass) return rejectWithValue("Eski parol noto'g'ri")
+  async ({ userId, oldPass, newPass }, { rejectWithValue }) => {
+    const res = await api.get<StoredUser>(`/users/${userId}`)
+    if (res.data.password !== oldPass) return rejectWithValue(i18n.t("Eski parol noto'g'ri"))
     await api.patch(`/users/${userId}`, { password: newPass })
     return true
   },
 )
 
+const initialState: AuthState = { user: readSavedUser(), loading: false, error: null }
+
 const authSlice = createSlice({
   name: 'auth',
-  initialState: { user: initialUser, loading: false, error: null } as AuthState,
+  initialState,
   reducers: {
     logout(state) {
       state.user = null
-      localStorage.removeItem('auth_user')
+      try { localStorage.removeItem('auth_user') } catch { /* ignore */ }
     },
     clearError(state) {
       state.error = null
@@ -64,11 +76,11 @@ const authSlice = createSlice({
     b.addCase(loginUser.fulfilled, (s, a) => {
       s.loading = false
       s.user = a.payload
-      localStorage.setItem('auth_user', JSON.stringify(a.payload))
+      try { localStorage.setItem('auth_user', JSON.stringify(a.payload)) } catch { /* ignore */ }
     })
     b.addCase(loginUser.rejected, (s, a) => {
       s.loading = false
-      s.error = a.payload as string
+      s.error = a.payload ?? a.error.message ?? i18n.t('Xatolik yuz berdi')
     })
   },
 })

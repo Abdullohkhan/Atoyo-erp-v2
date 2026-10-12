@@ -5,9 +5,11 @@ import {
 import { ChevronLeft, ChevronRight } from '@mui/icons-material'
 import { useState } from 'react'
 import dayjs, { type Dayjs } from 'dayjs'
-import 'dayjs/locale/uz'
+import localeData from 'dayjs/plugin/localeData'
+import { useTranslation } from 'react-i18next'
+import { dayjsLocale } from '@/i18n'
 
-dayjs.locale('uz')
+dayjs.extend(localeData)
 
 interface Props {
   open: boolean
@@ -17,10 +19,11 @@ interface Props {
   label?: string
 }
 
-const MONTHS = ['Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyn', 'Iyl', 'Avg', 'Sen', 'Okt', 'Noy', 'Dek']
-const DAYS = ['Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh', 'Ya']
-
-export default function DatePickerModal({ open, value, onClose, onConfirm, label = 'Sana tanlang' }: Props) {
+export default function DatePickerModal({ open, value, onClose, onConfirm, label }: Props) {
+  const { t, i18n } = useTranslation()
+  const MONTHS = dayjs().locale(dayjsLocale(i18n.language)).localeData().months()
+  const sundayFirst = dayjs().locale(dayjsLocale(i18n.language)).localeData().weekdaysMin()
+  const DAYS = [...sundayFirst.slice(1), sundayFirst[0]] // Monday first
   const [current, setCurrent] = useState<Dayjs>(value || dayjs())
   const [selected, setSelected] = useState<Dayjs>(value || dayjs())
 
@@ -46,12 +49,12 @@ export default function DatePickerModal({ open, value, onClose, onConfirm, label
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
       <DialogTitle sx={{ pb: 0 }}>
-        <Typography sx={{ fontWeight: 700 }}>{label}</Typography>
+        <Typography sx={{ fontWeight: 700 }}>{label ?? t('Sana tanlang')}</Typography>
         <Typography variant="h4" color="primary.main" sx={{ fontWeight: 800, mt: 0.5 }}>
-          {selected.format('DD MMMM YYYY')}
+          {selected.locale(dayjsLocale(i18n.language)).format('DD MMMM YYYY')}
         </Typography>
         <Typography variant="caption" color="text.secondary">
-          {selected.format('HH:mm')} — hozirgi vaqt
+          {selected.format('HH:mm')} — {t('hozirgi vaqt')}
         </Typography>
       </DialogTitle>
 
@@ -108,8 +111,8 @@ export default function DatePickerModal({ open, value, onClose, onConfirm, label
         {/* Quick shortcuts */}
         <Box sx={{ display: 'flex', gap: 1, mt: 2, flexWrap: 'wrap' }}>
           {[
-            { label: 'Bugun', value: dayjs() },
-            { label: 'Kecha', value: dayjs().subtract(1, 'day') },
+            { label: t('Bugun'), value: dayjs() },
+            { label: t('Kecha'), value: dayjs().subtract(1, 'day') },
           ].map((s) => (
             <Button key={s.label} size="small" variant="outlined" color="inherit"
               sx={{ borderRadius: 2, fontSize: '0.75rem' }}
@@ -121,8 +124,8 @@ export default function DatePickerModal({ open, value, onClose, onConfirm, label
       </DialogContent>
 
       <DialogActions sx={{ p: 2, gap: 1 }}>
-        <Button onClick={onClose} variant="outlined" color="inherit">Bekor</Button>
-        <Button onClick={handleConfirm} variant="contained">Tasdiqlash</Button>
+        <Button onClick={onClose} variant="outlined" color="inherit">{t('Bekor')}</Button>
+        <Button onClick={handleConfirm} variant="contained">{t('Tasdiqlash')}</Button>
       </DialogActions>
     </Dialog>
   )

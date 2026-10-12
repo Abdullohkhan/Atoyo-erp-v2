@@ -4,9 +4,10 @@ import {
   Chip, InputAdornment, IconButton,
 } from '@mui/material'
 import { Search, Close } from '@mui/icons-material'
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useAppSelector } from '@/app/hooks'
+import { useState, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
+import { motion, AnimatePresence } from 'motion/react'
+import { useAppSelector, useCan } from '@/app/hooks'
 import type { Product } from '@/shared/types/catalog.types'
 import { formatCurrency } from '@/shared/utils/formatters'
 
@@ -14,10 +15,7 @@ const CAT_COLORS: Record<string, 'primary' | 'success' | 'warning' | 'info' | 'e
   electronics: 'info', building: 'warning', chemical: 'error',
   food: 'success', clothing: 'primary', other: 'default',
 }
-const CAT_LABELS: Record<string, string> = {
-  electronics: 'Elektronika', building: 'Qurilish', chemical: 'Kimyo',
-  food: 'Oziq-ovqat', clothing: 'Kiyim', other: 'Boshqa',
-}
+import { CAT_LABELS } from '@/shared/constants'
 
 interface Props {
   open: boolean
@@ -27,6 +25,8 @@ interface Props {
 }
 
 export default function ProductSearchModal({ open, onClose, onSelect }: Props) {
+  const { t } = useTranslation()
+  const showCost = useCan('finance.view')
   const [query, setQuery] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
   const products = useAppSelector((s) => s.products.items)
@@ -41,6 +41,7 @@ export default function ProductSearchModal({ open, onClose, onSelect }: Props) {
 
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setQuery('')
       setTimeout(() => inputRef.current?.focus(), 80)
     }
@@ -62,7 +63,7 @@ export default function ProductSearchModal({ open, onClose, onSelect }: Props) {
           inputRef={inputRef}
           fullWidth value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Mahsulot nomini yozing..."
+          placeholder={t('Mahsulot nomini yozing...')}
           variant="standard"
           slotProps={{
             input: {
@@ -82,18 +83,18 @@ export default function ProductSearchModal({ open, onClose, onSelect }: Props) {
       <DialogContent sx={{ p: 0, maxHeight: '60vh', overflow: 'auto' }}>
         {filtered.length === 0 ? (
           <Box sx={{ py: 6, textAlign: 'center', color: 'text.secondary' }}>
-            <Typography>Mahsulot topilmadi</Typography>
+            <Typography>{t('Mahsulot topilmadi')}</Typography>
           </Box>
         ) : (
           <Table size="small" stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase' }}>Kod</TableCell>
-                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase' }}>Nomi</TableCell>
-                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase' }}>Kategoriya</TableCell>
-                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase' }}>O'lchov</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase' }}>Narx (dona)</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase' }}>Narx (optom)</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase' }}>{t('Kod')}</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase' }}>{t('Nomi')}</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase' }}>{t('Kategoriya')}</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase' }}>{t("O'lchov")}</TableCell>
+                <TableCell align="right" sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase' }}>{t('Narx')}</TableCell>
+                {showCost && <TableCell align="right" sx={{ fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase' }}>{t('Tannarxi')}</TableCell>}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -113,7 +114,7 @@ export default function ProductSearchModal({ open, onClose, onSelect }: Props) {
                     <TableCell sx={{ fontWeight: 600 }}>{p.name}</TableCell>
                     <TableCell>
                       <Chip
-                        label={CAT_LABELS[p.category] || p.category}
+                        label={t(CAT_LABELS[p.category] || p.category)}
                         color={CAT_COLORS[p.category] || 'default'}
                         size="small"
                         sx={{ borderRadius: 1, fontWeight: 600, fontSize: '0.7rem' }}
@@ -125,9 +126,7 @@ export default function ProductSearchModal({ open, onClose, onSelect }: Props) {
                     <TableCell align="right" sx={{ fontWeight: 700, color: 'primary.main' }}>
                       {formatCurrency(p.price)}
                     </TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 700, color: 'success.main' }}>
-                      {formatCurrency(p.costPrice)}
-                    </TableCell>
+                    {showCost && <TableCell align="right" sx={{ fontWeight: 700, color: 'success.main' }}>{formatCurrency(p.costPrice)}</TableCell>}
                   </motion.tr>
                 ))}
               </AnimatePresence>
@@ -136,29 +135,16 @@ export default function ProductSearchModal({ open, onClose, onSelect }: Props) {
         )}
         <Box sx={{ p: 1.5, borderTop: '1px solid', borderColor: 'divider', display: 'flex', gap: 2 }}>
           <Typography variant="caption" color="text.secondary">
-            <kbd style={{ padding: '1px 6px', borderRadius: 4, border: '1px solid #ccc', fontFamily: 'monospace' }}>↵</kbd> tanlash
+            <kbd style={{ padding: '1px 6px', borderRadius: 4, border: '1px solid #ccc', fontFamily: 'monospace' }}>↵</kbd> {t('tanlash')}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            <kbd style={{ padding: '1px 6px', borderRadius: 4, border: '1px solid #ccc', fontFamily: 'monospace' }}>Esc</kbd> yopish
+            <kbd style={{ padding: '1px 6px', borderRadius: 4, border: '1px solid #ccc', fontFamily: 'monospace' }}>Esc</kbd> {t('yopish')}
           </Typography>
           <Typography variant="caption" color="text.secondary" sx={{ ml: 'auto' }}>
-            {filtered.length} ta topildi
+            {t('{{count}} ta topildi', { count: filtered.length })}
           </Typography>
         </Box>
       </DialogContent>
     </Dialog>
   )
-}
-
-// Hook for using product search from any component
-export function useProductSearch() {
-  const [open, setOpen] = useState(false)
-  const [onSelectCallback, setOnSelectCallback] = useState<((p: Product) => void) | null>(null)
-
-  const openSearch = useCallback((cb: (p: Product) => void) => {
-    setOnSelectCallback(() => cb)
-    setOpen(true)
-  }, [])
-
-  return { open, openSearch, onSelect: onSelectCallback ?? (() => {}), onClose: () => setOpen(false) }
 }

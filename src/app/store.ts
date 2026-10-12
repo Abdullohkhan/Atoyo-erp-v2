@@ -1,5 +1,6 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { configureStore, type ThunkAction, type UnknownAction } from '@reduxjs/toolkit'
 import themeReducer from './themeSlice'
+import uiReducer from './uiSlice'
 import authReducer from '@/features/auth/authSlice'
 import productsReducer from '@/features/catalogs/products/store/productsSlice'
 import customersReducer from '@/features/catalogs/customers/store/customersSlice'
@@ -9,7 +10,6 @@ import warehousesReducer from '@/features/catalogs/warehouses/store/warehousesSl
 import saleOrdersReducer from '@/features/sales/orders/store/saleOrdersSlice'
 import saleInvoicesReducer from '@/features/sales/invoices/store/invoicesSlice'
 import purchaseOrdersReducer from '@/features/purchases/orders/store/purchaseOrdersSlice'
-import receiptsReducer from '@/features/purchases/receipts/store/receiptsSlice'
 import movementsReducer from '@/features/warehouse/movements/store/movementsSlice'
 import balanceReducer from '@/features/warehouse/balance/store/balanceSlice'
 import paymentsReducer from '@/features/finance/payments/store/paymentsSlice'
@@ -17,6 +17,7 @@ import paymentsReducer from '@/features/finance/payments/store/paymentsSlice'
 export const store = configureStore({
   reducer: {
     theme: themeReducer,
+    ui: uiReducer,
     auth: authReducer,
     products: productsReducer,
     customers: customersReducer,
@@ -26,7 +27,6 @@ export const store = configureStore({
     saleOrders: saleOrdersReducer,
     saleInvoices: saleInvoicesReducer,
     purchaseOrders: purchaseOrdersReducer,
-    receipts: receiptsReducer,
     movements: movementsReducer,
     balance: balanceReducer,
     payments: paymentsReducer,
@@ -35,3 +35,4 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
+export type AppThunk<R = void> = ThunkAction<R, RootState, unknown, UnknownAction>

@@ -5,10 +5,15 @@ import {
 import {
   Dashboard, Inventory2, People, LocalShipping, Person,
   Warehouse, ShoppingCart, Receipt, MoveDown, AccountBalance,
-  BarChart, ExpandLess, ExpandMore, Category,
+  BarChart, ExpandLess, ExpandMore, Category, AddShoppingCart, MoveToInbox,
 } from '@mui/icons-material'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useAppSelector } from '@/app/hooks'
+import { canAccess } from '@/app/permissions'
+import { ROLE_LABELS } from '@/shared/constants'
+import { getInitials } from '@/shared/utils/formatters'
 import { gsap } from 'gsap'
 
 const DRAWER_WIDTH = 260
@@ -36,6 +41,7 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Savdo', icon: <ShoppingCart />,
     children: [
       { label: 'Buyurtmalar', icon: <ShoppingCart />, path: '/sales/orders' },
+      { label: 'Yangi buyurtma', icon: <AddShoppingCart />, path: '/sales/orders/new' },
       { label: 'Fakturalar',  icon: <Receipt />,      path: '/sales/invoices' },
     ],
   },
@@ -43,6 +49,7 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Xarid', icon: <LocalShipping />,
     children: [
       { label: 'Buyurtmalar', icon: <ShoppingCart />, path: '/purchases/orders' },
+      { label: 'Yuk keldi (kirim)', icon: <MoveToInbox />, path: '/purchases/receipts/new' },
     ],
   },
   {
@@ -67,10 +74,16 @@ const NAV_ITEMS: NavItem[] = [
   },
 ]
 
-interface Props { collapsed: boolean }
+interface Props { collapsed: boolean; onNavigate?: () => void }
 
-export default function Sidebar({ collapsed }: Props) {
+export default function Sidebar({ collapsed, onNavigate }: Props) {
+  const { t } = useTranslation()
+  const user = useAppSelector((s) => s.auth.user)
   const navigate = useNavigate()
+  const go = (path: string) => { navigate(path); onNavigate?.() }
+  const navItems = useMemo(() => NAV_ITEMS
+    .map((item) => item.children ? { ...item, children: item.children.filter((c) => c.path && canAccess(user?.role, c.path)) } : item)
+    .filter((item) => (item.children ? item.children.length > 0 : item.path && canAccess(user?.role, item.path))), [user?.role])
   const location = useLocation()
   const [openGroups, setOpenGroups] = useState<string[]>(['Kataloglar', 'Savdo'])
   const logoRef = useRef<HTMLDivElement>(null)
@@ -109,7 +122,7 @@ export default function Sidebar({ collapsed }: Props) {
         {!collapsed && (
           <Box>
             <Typography variant="subtitle2" sx={{  lineHeight: 1.1 , fontWeight: 800 }}>ERP System</Typography>
-            <Typography variant="caption" color="text.secondary">v1.0</Typography>
+            <Typography variant="caption" color="text.secondary">v{__APP_VERSION__}</Typography>
           </Box>
         )}
       </Box>
@@ -122,14 +135,14 @@ export default function Sidebar({ collapsed }: Props) {
         '&::-webkit-scrollbar-thumb': { bgcolor: 'divider', borderRadius: 4 },
       }}>
         <List dense disablePadding>
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             if (item.path) {
               const active = isActive(item.path)
               return (
-                <Tooltip key={item.path} title={collapsed ? item.label : ''} placement="right">
+                <Tooltip key={item.path} title={collapsed ? t(item.label) : ''} placement="right">
                   <ListItem disablePadding sx={{ px: 1, mb: 0.25 }}>
                     <ListItemButton
-                      onClick={() => navigate(item.path!)}
+                      onClick={() => go(item.path!)}
                       selected={active}
                       sx={{
                         borderRadius: 2,
@@ -147,7 +160,7 @@ export default function Sidebar({ collapsed }: Props) {
                       <ListItemIcon sx={{ minWidth: collapsed ? 0 : 36, justifyContent: 'center', color: active ? 'inherit' : 'text.secondary' }}>
                         {item.icon}
                       </ListItemIcon>
-                      {!collapsed && <ListItemText primary={item.label} slotProps={{ primary: { sx: { fontWeight: active ? 700 : 500, fontSize: '0.875rem' } } }} />}
+                      {!collapsed && <ListItemText primary={t(item.label)} slotProps={{ primary: { sx: { fontWeight: active ? 700 : 500, fontSize: '0.875rem' } } }} />}
                     </ListItemButton>
                   </ListItem>
                 </Tooltip>
@@ -155,11 +168,11 @@ export default function Sidebar({ collapsed }: Props) {
             }
 
             // Group with children
-            const isOpen = openGroups.includes(item.label)
+            const isOpen = openGroups.includes(item.label) || !!item.children?.some((c) => c.path && isActive(c.path))
             const hasActiveChild = item.children?.some((c) => c.path && isActive(c.path))
             return (
               <Box key={item.label}>
-                <Tooltip title={collapsed ? item.label : ''} placement="right">
+                <Tooltip title={collapsed ? t(item.label) : ''} placement="right">
                   <ListItem disablePadding sx={{ px: 1, mb: 0.25 }}>
                     <ListItemButton
                       onClick={() => !collapsed && toggleGroup(item.label)}
@@ -175,7 +188,7 @@ export default function Sidebar({ collapsed }: Props) {
                       </ListItemIcon>
                       {!collapsed && (
                         <>
-                          <ListItemText primary={item.label} slotProps={{ primary: { sx: { fontWeight: 600, fontSize: '0.875rem', color: 'text.secondary' } } }} />
+                          <ListItemText primary={t(item.label)} slotProps={{ primary: { sx: { fontWeight: 600, fontSize: '0.875rem', color: 'text.secondary' } } }} />
                           {isOpen ? <ExpandLess fontSize="small" sx={{ color: 'text.secondary' }} /> : <ExpandMore fontSize="small" sx={{ color: 'text.secondary' }} />}
                         </>
                       )}
@@ -191,7 +204,7 @@ export default function Sidebar({ collapsed }: Props) {
                         return (
                           <ListItem key={child.path} disablePadding sx={{ px: 1, mb: 0.25 }}>
                             <ListItemButton
-                              onClick={() => navigate(child.path!)}
+                              onClick={() => go(child.path!)}
                               selected={childActive}
                               sx={{
                                 borderRadius: 2, minHeight: 36, pl: 2,
@@ -205,7 +218,7 @@ export default function Sidebar({ collapsed }: Props) {
                               <ListItemIcon sx={{ minWidth: 30, color: childActive ? 'inherit' : 'text.secondary' }}>
                                 <Box sx={{ fontSize: 16, display: 'flex' }}>{child.icon}</Box>
                               </ListItemIcon>
-                              <ListItemText primary={child.label} slotProps={{ primary: { sx: { fontWeight: childActive ? 700 : 500, fontSize: '0.825rem' } } }} />
+                              <ListItemText primary={t(child.label)} slotProps={{ primary: { sx: { fontWeight: childActive ? 700 : 500, fontSize: '0.825rem' } } }} />
                             </ListItemButton>
                           </ListItem>
                         )
@@ -221,11 +234,11 @@ export default function Sidebar({ collapsed }: Props) {
 
       <Divider />
       <Box sx={{ px: 2, py: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Avatar sx={{ width: 30, height: 30, bgcolor: 'secondary.main', fontSize: '0.75rem' }}>A</Avatar>
-        {!collapsed && (
-          <Box>
-            <Typography variant="caption" sx={{ fontWeight: 600, display: "block" }}>Admin</Typography>
-            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>Bosh administrator</Typography>
+        <Avatar sx={{ width: 30, height: 30, bgcolor: 'secondary.main', fontSize: '0.75rem' }}>{getInitials(user?.name)}</Avatar>
+        {!collapsed && user && (
+          <Box sx={{ minWidth: 0 }}>
+            <Typography variant="caption" noWrap sx={{ fontWeight: 600, display: 'block' }}>{user.name}</Typography>
+            <Typography variant="caption" color="text.secondary" noWrap sx={{ fontSize: '0.7rem', display: 'block' }}>{t(ROLE_LABELS[user.role] ?? user.role)}</Typography>
           </Box>
         )}
       </Box>
