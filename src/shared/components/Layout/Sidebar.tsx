@@ -122,7 +122,7 @@ export default function Sidebar({ collapsed, onNavigate }: Props) {
         {!collapsed && (
           <Box>
             <Typography variant="subtitle2" sx={{  lineHeight: 1.1 , fontWeight: 800 }}>ERP System</Typography>
-            <Typography variant="caption" color="text.secondary">v1.0</Typography>
+            <Typography variant="caption" color="text.secondary">v{__APP_VERSION__}</Typography>
           </Box>
         )}
       </Box>

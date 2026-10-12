@@ -33,6 +33,13 @@ i18n.use(initReactI18next).init({
   nsSeparator: false,
   returnEmptyString: false,
   interpolation: { escapeValue: false },
+  // Development aid: untranslated keys of ru / en are collected in window.__missingKeys.
+  saveMissing: import.meta.env.DEV,
+  missingKeyHandler: (_lngs, _ns, key) => {
+    if (!import.meta.env.DEV || i18n.language === 'uz') return
+    const w = window as unknown as { __missingKeys?: Set<string> }
+    ;(w.__missingKeys ??= new Set()).add(key)
+  },
 })
 
 export const dayjsLocale = (lng: string) => (lng === 'uz' ? 'uz-latn' : lng)

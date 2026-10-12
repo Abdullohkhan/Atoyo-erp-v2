@@ -40,7 +40,6 @@ export default function DashboardPage() {
   const series = useMemo(() => monthlySeries(sales, purchases), [sales, purchases])
   const totalSales = sales.filter((o) => isBooked(o.status)).reduce((s, o) => s + o.total, 0)
   const stockValue = balance.reduce((s, b) => s + b.totalValue, 0)
-  const stockQty = balance.reduce((s, b) => s + b.qty, 0)
   const drafts = sales.filter((o) => o.status === 'draft').length
   const lowStock = useMemo(
     () => balance.filter((b) => b.availableQty <= LOW_STOCK_LIMIT).sort((a, b) => a.availableQty - b.availableQty).slice(0, 5),
@@ -57,7 +56,7 @@ export default function DashboardPage() {
   const kpis = [
     { title: t('Jami savdo'), value: formatCurrency(totalSales), change: trend(series.map((p) => p.savdo)), icon: <ShoppingCart />, color: '#2563EB' },
     { title: t('Faol mijozlar'), value: formatNumber(customers.filter((c) => c.isActive).length), icon: <People />, color: '#22C55E' },
-    { title: t('Ombordagi tovar'), value: `${formatNumber(stockQty)} · ${formatCurrency(stockValue)}`, icon: <Inventory2 />, color: '#F59E0B' },
+    { title: t('Ombordagi tovar'), value: formatCurrency(stockValue), icon: <Inventory2 />, color: '#F59E0B' },
     showFinance
       ? { title: t('Kassa balansi'), value: formatCurrency(cashBalance(payments)), icon: <AccountBalance />, color: '#8B5CF6' }
       : { title: t('Qoralama buyurtmalar'), value: formatNumber(drafts), icon: <AccountBalance />, color: '#8B5CF6' },
