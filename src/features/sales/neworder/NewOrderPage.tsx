@@ -196,8 +196,8 @@ export default function NewOrderPage() {
                   : opts.slice(0, 8)
               }
               renderInput={(params) => <TextField {...params} label={`${t('Mijoz')} *`} size="small" placeholder={t('Ism yoki telefon yozing...')} />}
-              renderOption={(props, option) => (
-                <Box component="li" {...props} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start !important', py: 1 }}>
+              renderOption={({ key, ...props }, option) => (
+                <Box component="li" key={key} {...props} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start !important', py: 1 }}>
                   <Typography variant="body2" sx={{ fontWeight: 600 }}>{option.name}</Typography>
                   <Typography variant="caption" color="text.secondary">{option.phone}</Typography>
                   {option.debt > 0 && (
@@ -254,7 +254,7 @@ export default function NewOrderPage() {
       <Card sx={{ borderRadius: 3, overflow: 'hidden', mb: 2 }}>
         <Box sx={{ px: 2, py: 1.5, bgcolor: 'action.hover', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typography sx={{ fontWeight: 700 }}>{t('Mahsulotlar')}</Typography>
-          <Box sx={{ display: 'flex', gap: 1 }}>
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
             <Button startIcon={<SearchIcon />} size="small" variant="outlined"
               onClick={() => { setActiveRowId(rows[rows.length - 1].rowId); setSearchOpen(true) }}>
               {t('Qidirish')}
@@ -265,14 +265,14 @@ export default function NewOrderPage() {
             </Button>
           </Box>
         </Box>
-        <Box sx={{ overflowX: 'auto' }}><Table size="small" sx={{ minWidth: 760 }}>
+        <Box sx={{ overflowX: 'auto' }}><Table size="small" sx={{ minWidth: { xs: 560, sm: 760 } }}>
           <TableHead>
             <TableRow>
               <TableCell width={40}>#</TableCell>
               <TableCell>{t('Mahsulot')}</TableCell>
               <TableCell width={90}>{t("O'lchov")}</TableCell>
               <TableCell width={90}>{t('Soni')}</TableCell>
-              <TableCell width={130}>{t('Dona narx')}</TableCell>
+              <TableCell width={130} sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{t('Dona narx')}</TableCell>
               <TableCell width={130}>{t("Qo'llaniladigan narx")}</TableCell>
               <TableCell width={130} align="right">{t('Jami')}</TableCell>
               <TableCell width={48} />
@@ -320,7 +320,7 @@ export default function NewOrderPage() {
                     slotProps={{ input: { inputProps: { min: 1, style: { textAlign: 'center' } } } }}
                     sx={{ width: 75 }} />
                 </TableCell>
-                <TableCell>
+                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                   <Typography variant="caption" color="primary.main" sx={{ fontWeight: 600 }}>{formatCurrency(row.retailPrice)}</Typography>
                 </TableCell>
                 <TableCell>

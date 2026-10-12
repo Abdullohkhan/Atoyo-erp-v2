@@ -19,7 +19,7 @@ interface Props {
   label?: string
 }
 
-export default function DatePickerModal({ open, value, onClose, onConfirm, label = 'Sana tanlang' }: Props) {
+export default function DatePickerModal({ open, value, onClose, onConfirm, label }: Props) {
   const { t, i18n } = useTranslation()
   const MONTHS = dayjs().locale(dayjsLocale(i18n.language)).localeData().months()
   const sundayFirst = dayjs().locale(dayjsLocale(i18n.language)).localeData().weekdaysMin()
@@ -49,7 +49,7 @@ export default function DatePickerModal({ open, value, onClose, onConfirm, label
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
       <DialogTitle sx={{ pb: 0 }}>
-        <Typography sx={{ fontWeight: 700 }}>{t(label)}</Typography>
+        <Typography sx={{ fontWeight: 700 }}>{label ?? t('Sana tanlang')}</Typography>
         <Typography variant="h4" color="primary.main" sx={{ fontWeight: 800, mt: 0.5 }}>
           {selected.locale(dayjsLocale(i18n.language)).format('DD MMMM YYYY')}
         </Typography>

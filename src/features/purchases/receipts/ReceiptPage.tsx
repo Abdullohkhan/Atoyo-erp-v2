@@ -196,7 +196,7 @@ export default function ReceiptPage() {
       <Card sx={{ borderRadius: 3, overflow: 'hidden', mb: 2 }}>
         <Box sx={{ px: 2, py: 1.5, bgcolor: 'action.hover', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typography sx={{ fontWeight: 700 }}>{t("Mahsulotlar ro'yxati")}</Typography>
-          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
             <Tooltip title={t('Ctrl+Space — mahsulot qidirish')}>
               <Button startIcon={<SearchIcon />} size="small" variant="outlined"
                 onClick={() => { setActiveRowId(rows[rows.length - 1].rowId); setSearchOpen(true) }}>

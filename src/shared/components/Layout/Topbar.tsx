@@ -28,7 +28,7 @@ const ROUTE_TITLES: Record<string, string> = {
   '/catalogs/warehouses': 'Omborlar',
   '/sales/orders': 'Savdo buyurtmalari',
   '/sales/orders/new': 'Yangi spiska',
-  '/sales/invoices': 'Savdo fakturalari',
+  '/sales/invoices': 'Fakturalar',
   '/purchases/orders': 'Xarid buyurtmalari',
   '/purchases/receipts/new': 'Yuk keldi',
   '/warehouse/balance': 'Ombor qoldiqlari',

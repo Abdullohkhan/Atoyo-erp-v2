@@ -195,6 +195,7 @@ const ru: Record<string, string> = {
   Summa: 'Сумма',
   "To'langan": 'Оплачено',
   Qoldiq: 'Остаток',
+  Miqdor: 'Количество',
   "To'lanmagan": 'Не оплачено',
   Qisman: 'Частично',
   Tasdiqlangan: 'Подтверждён',

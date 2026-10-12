@@ -195,6 +195,7 @@ const en: Record<string, string> = {
   Summa: 'Amount',
   "To'langan": 'Paid',
   Qoldiq: 'Balance due',
+  Miqdor: 'Quantity',
   "To'lanmagan": 'Unpaid',
   Qisman: 'Partial',
   Tasdiqlangan: 'Confirmed',
