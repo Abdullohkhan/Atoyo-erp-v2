@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { exportSheetsToExcel } from '@/shared/utils/excel'
 import AnimatedPage from '@/shared/components/AnimatedPage/AnimatedPage'
 import StatusChip from '@/shared/components/StatusChip/StatusChip'
-import { useAppDispatch, useAppSelector } from '@/app/hooks'
+import { useAppDispatch, useAppSelector, useCan } from '@/app/hooks'
 import { fetchCustomers } from './store/customersSlice'
 import { fetchSaleOrders } from '@/features/sales/orders/store/saleOrdersSlice'
 import { fetchPayments } from '@/features/finance/payments/store/paymentsSlice'
@@ -23,6 +23,8 @@ export default function CustomerDetailPage() {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const [tab, setTab] = useState(0)
+  const canSales = useCan('sales.view')
+  const canPayments = useCan('payments.view')
 
   const customer = useAppSelector((s) => s.customers.items.find((c) => c.id === id))
   const allOrders = useAppSelector((s) => s.saleOrders.items)
@@ -36,9 +38,9 @@ export default function CustomerDetailPage() {
 
   useEffect(() => {
     dispatch(fetchCustomers())
-    dispatch(fetchSaleOrders())
-    dispatch(fetchPayments())
-  }, [dispatch])
+    if (canSales) dispatch(fetchSaleOrders())
+    if (canPayments) dispatch(fetchPayments())
+  }, [dispatch, canSales, canPayments])
 
   const exportExcel = () => {
     const col = (header: string, key: string) => ({ header: t(header), key })

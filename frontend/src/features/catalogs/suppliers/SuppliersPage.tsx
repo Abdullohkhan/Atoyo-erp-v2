@@ -30,7 +30,7 @@ export default function SuppliersPage() {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const { items, loading } = useAppSelector((s) => s.suppliers)
-  const canWrite = useCan('suppliers.write')
+  const canWrite = useCan('suppliers.manage')
   useEffect(() => { dispatch(fetchSuppliers()) }, [dispatch])
 
   const cat = useCatalog<Supplier>({

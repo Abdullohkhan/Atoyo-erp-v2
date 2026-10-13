@@ -43,7 +43,7 @@ export default function PaymentsPage() {
   const { items, loading } = useAppSelector((s) => s.payments)
   const customers = useAppSelector((s) => s.customers.items)
   const suppliers = useAppSelector((s) => s.suppliers.items)
-  const canWrite = useCan('payments.write')
+  const canWrite = useCan('payments.create')
   const { busy, run } = useAction()
   const [open, setOpen] = useState(false)
   const { control, handleSubmit, reset, setValue, formState: { errors } } = useForm<FormData>({
@@ -74,7 +74,7 @@ export default function PaymentsPage() {
     const cp = counterparties.find((c) => c.id === d.counterpartyId)
     const ok = await run(() => dispatch(recordPayment({
       direction: d.direction, type: d.type, number: d.number || undefined, date: d.date, amount: d.amount, category: d.category,
-      description: d.description || undefined, counterpartyId: cp?.id, counterpartyName: cp?.name,
+      description: d.description || undefined, counterpartyId: cp?.id,
     })), "To'lov saqlandi")
     if (ok) setOpen(false)
   })

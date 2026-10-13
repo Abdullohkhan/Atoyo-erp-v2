@@ -31,7 +31,7 @@ export default function CustomersPage() {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const { items, loading } = useAppSelector((s) => s.customers)
-  const canWrite = useCan('customers.write')
+  const canWrite = useCan('customers.manage')
   useEffect(() => { dispatch(fetchCustomers()) }, [dispatch])
 
   const cat = useCatalog<Customer>({

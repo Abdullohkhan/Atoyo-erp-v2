@@ -4,7 +4,7 @@ import {
 } from '@mui/material'
 import {
   Person, Lock, Visibility, VisibilityOff,
-  AdminPanelSettings, PointOfSale, AccountBalance,
+  AdminPanelSettings, PointOfSale, AccountBalance, Engineering, Gavel, LocalShipping, Warehouse,
 } from '@mui/icons-material'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -13,13 +13,19 @@ import { motion } from 'motion/react'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { loginUser, clearError } from './authSlice'
 import LanguageSwitcher from '@/shared/components/LanguageSwitcher/LanguageSwitcher'
-import { ROLE_LABELS } from '@/shared/constants'
 
-// Demo accounts are shown only in development builds.
+// Demo accounts (created by the backend seed) are shown only in development builds.
+const DEMO_PASSWORD = 'Demo12345'
 const DEMO = [
-  { role: 'owner', username: 'admin', password: 'admin123', icon: <AdminPanelSettings fontSize="small" /> },
-  { role: 'seller', username: 'seller1', password: 'seller123', icon: <PointOfSale fontSize="small" /> },
-  { role: 'accountant', username: 'accountant', password: 'acc123', icon: <AccountBalance fontSize="small" /> },
+  { username: 'owner', label: 'Owner', password: 'Owner12345', icon: <AdminPanelSettings fontSize="small" /> },
+  { username: 'admin', label: 'Admin', icon: <AdminPanelSettings fontSize="small" /> },
+  { username: 'director', label: 'Direktor', icon: <AdminPanelSettings fontSize="small" /> },
+  { username: 'seller1', label: 'Sotuvchi', icon: <PointOfSale fontSize="small" /> },
+  { username: 'engineer', label: 'Injener', icon: <Engineering fontSize="small" /> },
+  { username: 'declarant', label: 'Deklarant', icon: <Gavel fontSize="small" /> },
+  { username: 'supply', label: "Ta'minotchi", icon: <LocalShipping fontSize="small" /> },
+  { username: 'accountant', label: 'Buxgalter', icon: <AccountBalance fontSize="small" /> },
+  { username: 'storekeeper', label: 'Omborchi', icon: <Warehouse fontSize="small" /> },
 ]
 
 export default function LoginPage() {
@@ -93,8 +99,8 @@ export default function LoginPage() {
               </Typography>
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                 {DEMO.map((d) => (
-                  <Chip key={d.role} icon={d.icon} label={t(ROLE_LABELS[d.role])} clickable size="small"
-                    onClick={() => { setUsername(d.username); setPassword(d.password); dispatch(clearError()) }} />
+                  <Chip key={d.username} icon={d.icon} label={t(d.label)} clickable size="small"
+                    onClick={() => { setUsername(d.username); setPassword(d.password ?? DEMO_PASSWORD); dispatch(clearError()) }} />
                 ))}
               </Box>
             </Box>

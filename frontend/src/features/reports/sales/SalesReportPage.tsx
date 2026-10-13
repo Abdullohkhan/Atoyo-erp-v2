@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
 import AnimatedPage from '@/shared/components/AnimatedPage/AnimatedPage'
 import PageHeader from '@/shared/components/PageHeader/PageHeader'
-import { useAppDispatch, useAppSelector } from '@/app/hooks'
+import { useAppDispatch, useAppSelector, useCan } from '@/app/hooks'
 import { formatCurrency, formatNumber } from '@/shared/utils/formatters'
 import { isBooked, monthlySeries, salesByCategory } from '@/shared/services/stats'
 import { CAT_LABELS } from '@/shared/constants'
@@ -28,7 +28,8 @@ export default function SalesReportPage() {
   const [from, setFrom] = useState('')
   const [to, setTo] = useState('')
 
-  useEffect(() => { dispatch(fetchSaleOrders()); dispatch(fetchPurchaseOrders()); dispatch(fetchProducts()) }, [dispatch])
+  const canPurchases = useCan('purchases.view')
+  useEffect(() => { dispatch(fetchSaleOrders()); if (canPurchases) dispatch(fetchPurchaseOrders()); dispatch(fetchProducts()) }, [dispatch, canPurchases])
 
   const inRange = (date: string) => (!from || date.slice(0, 10) >= from) && (!to || date.slice(0, 10) <= to)
   const sales = useMemo(() => allSales.filter((o) => inRange(o.date)), [allSales, from, to]) // eslint-disable-line react-hooks/exhaustive-deps

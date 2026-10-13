@@ -5,10 +5,10 @@ import api from '@/lib/axios'
 interface State { items: PurchaseOrder[]; loading: boolean; error: string | null }
 const initialState: State = { items: [], loading: false, error: null }
 
-export const fetchPurchaseOrders = createAsyncThunk('purchaseOrders/fetchAll', async () => (await api.get<PurchaseOrder[]>('/purchaseOrders')).data)
-export const createPurchaseOrder = createAsyncThunk('purchaseOrders/create', async (data: Omit<PurchaseOrder, 'id'>) => (await api.post<PurchaseOrder>('/purchaseOrders', data)).data)
-export const updatePurchaseOrder = createAsyncThunk('purchaseOrders/update', async ({ id, data }: { id: string; data: Partial<PurchaseOrder> }) => (await api.patch<PurchaseOrder>(`/purchaseOrders/${id}`, data)).data)
-export const deletePurchaseOrder = createAsyncThunk('purchaseOrders/delete', async (id: string) => { await api.delete(`/purchaseOrders/${id}`); return id })
+export const fetchPurchaseOrders = createAsyncThunk('purchaseOrders/fetchAll', async () => (await api.get<PurchaseOrder[]>('/purchase-orders')).data)
+export const createPurchaseOrder = createAsyncThunk('purchaseOrders/create', async (data: Omit<PurchaseOrder, 'id'>) => (await api.post<PurchaseOrder>('/purchase-orders', data)).data)
+export const updatePurchaseOrder = createAsyncThunk('purchaseOrders/update', async ({ id, data }: { id: string; data: Partial<PurchaseOrder> }) => (await api.patch<PurchaseOrder>(`/purchase-orders/${id}`, data)).data)
+export const deletePurchaseOrder = createAsyncThunk('purchaseOrders/delete', async (id: string) => { await api.delete(`/purchase-orders/${id}`); return id })
 
 const slice = createSlice({
   name: 'purchaseOrders', initialState, reducers: {},

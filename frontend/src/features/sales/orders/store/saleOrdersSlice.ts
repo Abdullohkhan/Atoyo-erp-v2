@@ -5,10 +5,10 @@ import api from '@/lib/axios'
 interface State { items: SaleOrder[]; loading: boolean; error: string | null }
 const initialState: State = { items: [], loading: false, error: null }
 
-export const fetchSaleOrders = createAsyncThunk('saleOrders/fetchAll', async () => (await api.get<SaleOrder[]>('/saleOrders')).data)
-export const createSaleOrder = createAsyncThunk('saleOrders/create', async (data: Omit<SaleOrder, 'id'>) => (await api.post<SaleOrder>('/saleOrders', data)).data)
-export const updateSaleOrder = createAsyncThunk('saleOrders/update', async ({ id, data }: { id: string; data: Partial<SaleOrder> }) => (await api.patch<SaleOrder>(`/saleOrders/${id}`, data)).data)
-export const deleteSaleOrder = createAsyncThunk('saleOrders/delete', async (id: string) => { await api.delete(`/saleOrders/${id}`); return id })
+export const fetchSaleOrders = createAsyncThunk('saleOrders/fetchAll', async () => (await api.get<SaleOrder[]>('/sale-orders')).data)
+export const createSaleOrder = createAsyncThunk('saleOrders/create', async (data: Omit<SaleOrder, 'id'>) => (await api.post<SaleOrder>('/sale-orders', data)).data)
+export const updateSaleOrder = createAsyncThunk('saleOrders/update', async ({ id, data }: { id: string; data: Partial<SaleOrder> }) => (await api.patch<SaleOrder>(`/sale-orders/${id}`, data)).data)
+export const deleteSaleOrder = createAsyncThunk('saleOrders/delete', async (id: string) => { await api.delete(`/sale-orders/${id}`); return id })
 
 const slice = createSlice({
   name: 'saleOrders', initialState, reducers: {},

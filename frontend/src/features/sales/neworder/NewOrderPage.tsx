@@ -14,8 +14,7 @@ import PageHeader from '@/shared/components/PageHeader/PageHeader'
 import DatePickerModal from '@/shared/components/DatePickerModal/DatePickerModal'
 import ProductSearchModal from '@/shared/components/ProductSearchModal/ProductSearchModal'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
-import { createSaleOrder } from '@/features/sales/orders/store/saleOrdersSlice'
-import { confirmSaleOrder, operationError } from '@/shared/services/operations'
+import { createSale, operationError } from '@/shared/services/operations'
 import { fetchBalance } from '@/features/warehouse/balance/store/balanceSlice'
 import { notify } from '@/app/uiSlice'
 import { CAT_LABELS } from '@/shared/constants'
@@ -24,8 +23,7 @@ import { fetchWarehouses } from '@/features/catalogs/warehouses/store/warehouses
 import { fetchProducts } from '@/features/catalogs/products/store/productsSlice'
 import type { Product } from '@/shared/types/catalog.types'
 import type { Customer } from '@/shared/types/catalog.types'
-import type { SaleOrder } from '@/shared/types/document.types'
-import { formatCurrency, generateId, generateNumber } from '@/shared/utils/formatters'
+import { formatCurrency, generateId } from '@/shared/utils/formatters'
 
 interface OrderRow {
   rowId: string
@@ -129,37 +127,16 @@ export default function NewOrderPage() {
 
   const handleSave = async (status: 'draft' | 'confirmed') => {
     if (!isValid || !customer || saving) return
-    const warehouse = warehouses.find((w) => w.id === effectiveWarehouseId)
     setSaving(true)
     try {
-      const now = new Date().toISOString()
-      const created = await dispatch(createSaleOrder({
-        number: generateNumber('SAV'),
+      // One request: a failed confirmation (e.g. not enough stock) saves nothing.
+      await dispatch(createSale({
         date: date.toISOString(),
         customerId: customer.id,
-        customerName: customer.name,
         warehouseId: effectiveWarehouseId,
-        warehouseName: warehouse?.name || '',
-        items: validRows.map((r) => ({
-          productId: r.productId, productName: r.productName, unit: r.unit,
-          qty: r.qty, price: r.appliedPrice, discount: 0, sum: r.total,
-        })),
-        status: 'draft',
-        total,
-        paid: 0,
-        balance: total,
-        createdAt: now,
-        updatedAt: now,
-      } as Omit<SaleOrder, 'id'>)).unwrap()
-      if (status === 'confirmed') {
-        try {
-          await dispatch(confirmSaleOrder(created.id))
-        } catch (e) {
-          dispatch(notify({ message: `${t('Qoralama sifatida saqlandi')}: ${operationError(e)}`, severity: 'warning' }))
-          navigate('/sales/orders')
-          return
-        }
-      }
+        items: validRows.map((r) => ({ productId: r.productId, qty: r.qty, price: r.appliedPrice })),
+        confirm: status === 'confirmed',
+      }))
       dispatch(notify({ message: t('Spiska saqlandi') }))
       navigate('/sales/orders')
     } catch (e) {

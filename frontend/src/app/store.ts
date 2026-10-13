@@ -1,6 +1,7 @@
 import { configureStore, type ThunkAction, type UnknownAction } from '@reduxjs/toolkit'
 import themeReducer from './themeSlice'
 import uiReducer from './uiSlice'
+import notificationsReducer from '@/features/notifications/notificationsSlice'
 import authReducer from '@/features/auth/authSlice'
 import productsReducer from '@/features/catalogs/products/store/productsSlice'
 import customersReducer from '@/features/catalogs/customers/store/customersSlice'
@@ -18,6 +19,7 @@ export const store = configureStore({
   reducer: {
     theme: themeReducer,
     ui: uiReducer,
+    notifications: notificationsReducer,
     auth: authReducer,
     products: productsReducer,
     customers: customersReducer,
@@ -32,6 +34,10 @@ export const store = configureStore({
     payments: paymentsReducer,
   },
 })
+
+import { setSessionExpiredHandler } from '@/lib/axios'
+import { logout } from '@/features/auth/authSlice'
+setSessionExpiredHandler(() => store.dispatch(logout()))
 
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch

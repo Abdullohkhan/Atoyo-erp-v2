@@ -8,6 +8,7 @@ import AnimatedPage from '@/shared/components/AnimatedPage/AnimatedPage'
 import KpiCard from './components/KpiCard'
 import SalesChart from './components/SalesChart'
 import RecentDocs from './components/RecentDocs'
+import RequestsBoard from './components/RequestsBoard'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { can } from '@/app/permissions'
 import { LOW_STOCK_LIMIT } from '@/shared/constants'
@@ -24,22 +25,33 @@ export default function DashboardPage() {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const alertRef = useRef<HTMLDivElement>(null)
-  const role = useAppSelector((s) => s.auth.user?.role)
+  const me = useAppSelector((s) => s.auth.user)
   const sales = useAppSelector((s) => s.saleOrders.items)
   const purchases = useAppSelector((s) => s.purchaseOrders.items)
   const customers = useAppSelector((s) => s.customers.items)
   const balance = useAppSelector((s) => s.balance.items)
   const payments = useAppSelector((s) => s.payments.items)
-  const showFinance = can(role, 'finance.view')
+  const showFinance = can(me, 'costs.view')
+
+  const canSales = can(me, 'sales.view')
+  const canPurchases = can(me, 'purchases.view')
+  const canCustomers = can(me, 'customers.view') || can(me, 'customers.manage')
+  const canStock = can(me, 'stock.view')
+  const canPayments = can(me, 'payments.view')
+  const canRequests = can(me, 'requests.view')
 
   useEffect(() => {
-    dispatch(fetchSaleOrders()); dispatch(fetchPurchaseOrders()); dispatch(fetchCustomers()); dispatch(fetchBalance())
-    if (showFinance) dispatch(fetchPayments())
-  }, [dispatch, showFinance])
+    if (canSales) dispatch(fetchSaleOrders())
+    if (canPurchases) dispatch(fetchPurchaseOrders())
+    if (canCustomers) dispatch(fetchCustomers())
+    if (canStock) dispatch(fetchBalance())
+    if (canPayments) dispatch(fetchPayments())
+  }, [dispatch, canSales, canPurchases, canCustomers, canStock, canPayments])
 
   const series = useMemo(() => monthlySeries(sales, purchases), [sales, purchases])
   const totalSales = sales.filter((o) => isBooked(o.status)).reduce((s, o) => s + o.total, 0)
-  const stockValue = balance.reduce((s, b) => s + b.totalValue, 0)
+  const stockValue = balance.reduce((s, b) => s + (b.totalValue ?? 0), 0)
+  const stockQty = balance.reduce((s, b) => s + b.qty, 0)
   const drafts = sales.filter((o) => o.status === 'draft').length
   const lowStock = useMemo(
     () => balance.filter((b) => b.availableQty <= LOW_STOCK_LIMIT).sort((a, b) => a.availableQty - b.availableQty).slice(0, 5),
@@ -54,23 +66,25 @@ export default function DashboardPage() {
   }, [lowStock.length])
 
   const kpis = [
-    { title: t('Jami savdo'), value: formatCurrency(totalSales), change: trend(series.map((p) => p.savdo)), icon: <ShoppingCart />, color: '#2563EB' },
-    { title: t('Faol mijozlar'), value: formatNumber(customers.filter((c) => c.isActive).length), icon: <People />, color: '#22C55E' },
-    { title: t('Ombordagi tovar'), value: formatCurrency(stockValue), icon: <Inventory2 />, color: '#F59E0B' },
-    showFinance
+    canSales && { title: t('Jami savdo'), value: formatCurrency(totalSales), change: trend(series.map((p) => p.savdo)), icon: <ShoppingCart />, color: '#2563EB' },
+    canCustomers && { title: t('Faol mijozlar'), value: formatNumber(customers.filter((c) => c.isActive).length), icon: <People />, color: '#22C55E' },
+    canStock && { title: t('Ombordagi tovar'), value: showFinance ? formatCurrency(stockValue) : `${formatNumber(stockQty)}`, icon: <Inventory2 />, color: '#F59E0B' },
+    canPayments
       ? { title: t('Kassa balansi'), value: formatCurrency(cashBalance(payments)), icon: <AccountBalance />, color: '#8B5CF6' }
-      : { title: t('Qoralama buyurtmalar'), value: formatNumber(drafts), icon: <AccountBalance />, color: '#8B5CF6' },
-  ]
+      : canSales && { title: t('Qoralama buyurtmalar'), value: formatNumber(drafts), icon: <AccountBalance />, color: '#8B5CF6' },
+  ].filter((k): k is Exclude<typeof k, false> => !!k)
 
   const links = [
-    { label: 'Yangi savdo hujjati', color: 'primary.main', path: '/sales/orders/new', allowed: can(role, 'sales.create') },
-    { label: 'Xarid buyurtmasi', color: 'success.main', path: '/purchases/receipts/new', allowed: can(role, 'purchases.create') },
-    { label: "To'lov kiritish", color: 'info.main', path: '/finance/payments', allowed: can(role, 'payments.write') },
-    { label: 'Ombor qoldiqlari', color: 'warning.main', path: '/warehouse/balance', allowed: true },
+    { label: 'Yangi savdo hujjati', color: 'primary.main', path: '/sales/orders/new', allowed: can(me, 'sales.create') },
+    { label: 'Xarid buyurtmasi', color: 'success.main', path: '/purchases/receipts/new', allowed: can(me, 'purchases.create') },
+    { label: "To'lov kiritish", color: 'info.main', path: '/finance/payments', allowed: can(me, 'payments.create') },
+    { label: 'Yangi zayavka', color: 'secondary.main', path: '/requests', allowed: can(me, 'requests.create') },
+    { label: 'Ombor qoldiqlari', color: 'warning.main', path: '/warehouse/balance', allowed: canStock },
   ].filter((l) => l.allowed)
 
   return (
     <AnimatedPage>
+      {canRequests && <Box sx={{ mb: 3 }}><RequestsBoard /></Box>}
       <Grid container spacing={2} sx={{ mb: 3 }}>
         {kpis.map((kpi, i) => (
           <Grid key={kpi.title} size={{ xs: 12, sm: 6, lg: 3 }}>
@@ -80,10 +94,10 @@ export default function DashboardPage() {
       </Grid>
 
       <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid size={{ xs: 12, lg: 8 }}>
+        {canSales && <Grid size={{ xs: 12, lg: canStock ? 8 : 12 }}>
           <SalesChart data={series} />
-        </Grid>
-        <Grid size={{ xs: 12, lg: 4 }}>
+        </Grid>}
+        {canStock && <Grid size={{ xs: 12, lg: canSales ? 4 : 12 }}>
           <Card sx={{ borderRadius: 3, height: '100%' }}>
             <CardHeader title={t('Kam qolgan tovarlar')} slotProps={{ title: { sx: { fontWeight: 700 }, variant: 'subtitle1' } }} />
             <CardContent sx={{ pt: 0 }} ref={alertRef}>
@@ -111,13 +125,13 @@ export default function DashboardPage() {
               })}
             </CardContent>
           </Card>
-        </Grid>
+        </Grid>}
       </Grid>
 
       <Grid container spacing={2}>
-        <Grid size={{ xs: 12, md: 7 }}>
+        {(canSales || canPurchases) && <Grid size={{ xs: 12, md: 7 }}>
           <RecentDocs sales={sales} purchases={purchases} />
-        </Grid>
+        </Grid>}
         <Grid size={{ xs: 12, md: 5 }}>
           <Card sx={{ borderRadius: 3, height: '100%' }}>
             <CardHeader title={t('Tezkor havolalar')} slotProps={{ title: { sx: { fontWeight: 700 }, variant: 'subtitle1' } }} />

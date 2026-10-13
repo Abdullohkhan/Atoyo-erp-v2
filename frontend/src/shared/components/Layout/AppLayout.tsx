@@ -5,7 +5,7 @@ import { AnimatePresence } from 'motion/react'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
 import ProductSearchModal from '@/shared/components/ProductSearchModal/ProductSearchModal'
-import { useAppDispatch, useAppSelector } from '@/app/hooks'
+import { useAppDispatch, useAppSelector, useCan } from '@/app/hooks'
 import { closeToast } from '@/app/uiSlice'
 import { fetchProducts } from '@/features/catalogs/products/store/productsSlice'
 
@@ -18,7 +18,10 @@ export default function AppLayout() {
   const [searchOpen, setSearchOpen] = useState(false)
   const toast = useAppSelector((s) => s.ui.toast)
 
-  useEffect(() => { dispatch(fetchProducts()) }, [dispatch])
+  const canView = useCan('products.view')
+  const canManage = useCan('products.manage')
+  const canProducts = canView || canManage
+  useEffect(() => { if (canProducts) dispatch(fetchProducts()) }, [dispatch, canProducts])
 
   // Global Ctrl+Space listener
   useEffect(() => {

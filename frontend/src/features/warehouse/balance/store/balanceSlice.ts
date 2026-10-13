@@ -5,7 +5,7 @@ import api from '@/lib/axios'
 interface State { items: StockBalance[]; loading: boolean; error: string | null }
 const initialState: State = { items: [], loading: false, error: null }
 
-export const fetchBalance = createAsyncThunk('balance/fetchAll', async () => (await api.get<StockBalance[]>('/stockBalance')).data)
+export const fetchBalance = createAsyncThunk('balance/fetchAll', async () => (await api.get<StockBalance[]>('/stock-balance')).data)
 
 const slice = createSlice({
   name: 'balance', initialState, reducers: {},

@@ -6,13 +6,13 @@ import {
   Dashboard, Inventory2, People, LocalShipping, Person,
   Warehouse, ShoppingCart, Receipt, MoveDown, AccountBalance,
   BarChart, ExpandLess, ExpandMore, Category, AddShoppingCart, MoveToInbox,
+  Assignment, Description, Gavel, AdminPanelSettings, Group, Security, Article, Settings, History,
 } from '@mui/icons-material'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAppSelector } from '@/app/hooks'
 import { canAccess } from '@/app/permissions'
-import { ROLE_LABELS } from '@/shared/constants'
 import { getInitials } from '@/shared/utils/formatters'
 import { gsap } from 'gsap'
 
@@ -27,6 +27,14 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: 'Dashboard',    icon: <Dashboard />,       path: '/' },
+  {
+    label: 'CRM', icon: <Assignment />,
+    children: [
+      { label: 'Zayavkalar',     icon: <Assignment />,  path: '/requests' },
+      { label: 'Shartnomalar',   icon: <Gavel />,       path: '/documents/contracts' },
+      { label: 'Dalolatnomalar', icon: <Description />, path: '/documents/acts' },
+    ],
+  },
   {
     label: 'Kataloglar', icon: <Category />,
     children: [
@@ -72,6 +80,16 @@ const NAV_ITEMS: NavItem[] = [
       { label: 'Qoldiqlar', icon: <Inventory2 />, path: '/reports/stock' },
     ],
   },
+  {
+    label: 'Boshqaruv', icon: <AdminPanelSettings />,
+    children: [
+      { label: 'Foydalanuvchilar', icon: <Group />, path: '/admin/users' },
+      { label: 'Rollar va ruxsatlar', icon: <Security />, path: '/admin/roles' },
+      { label: 'Shartnoma shablonlari', icon: <Article />, path: '/admin/templates' },
+      { label: 'Sozlamalar', icon: <Settings />, path: '/admin/settings' },
+      { label: 'Audit jurnali', icon: <History />, path: '/admin/audit' },
+    ],
+  },
 ]
 
 interface Props { collapsed: boolean; onNavigate?: () => void }
@@ -82,10 +100,10 @@ export default function Sidebar({ collapsed, onNavigate }: Props) {
   const navigate = useNavigate()
   const go = (path: string) => { navigate(path); onNavigate?.() }
   const navItems = useMemo(() => NAV_ITEMS
-    .map((item) => item.children ? { ...item, children: item.children.filter((c) => c.path && canAccess(user?.role, c.path)) } : item)
-    .filter((item) => (item.children ? item.children.length > 0 : item.path && canAccess(user?.role, item.path))), [user?.role])
+    .map((item) => item.children ? { ...item, children: item.children.filter((c) => c.path && canAccess(user, c.path)) } : item)
+    .filter((item) => (item.children ? item.children.length > 0 : item.path && canAccess(user, item.path))), [user])
   const location = useLocation()
-  const [openGroups, setOpenGroups] = useState<string[]>(['Kataloglar', 'Savdo'])
+  const [openGroups, setOpenGroups] = useState<string[]>(['CRM'])
   const logoRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -97,7 +115,7 @@ export default function Sidebar({ collapsed, onNavigate }: Props) {
   const toggleGroup = (label: string) =>
     setOpenGroups((prev) => prev.includes(label) ? prev.filter((x) => x !== label) : [...prev, label])
 
-  const isActive = (path: string) => location.pathname === path
+  const isActive = (path: string) => location.pathname === path || (path !== '/' && path !== '/sales/orders' && location.pathname.startsWith(`${path}/`))
 
   return (
     <Box
@@ -234,11 +252,11 @@ export default function Sidebar({ collapsed, onNavigate }: Props) {
 
       <Divider />
       <Box sx={{ px: 2, py: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Avatar sx={{ width: 30, height: 30, bgcolor: 'secondary.main', fontSize: '0.75rem' }}>{getInitials(user?.name)}</Avatar>
+        <Avatar sx={{ width: 30, height: 30, bgcolor: 'secondary.main', fontSize: '0.75rem' }}>{getInitials(user?.fullName)}</Avatar>
         {!collapsed && user && (
           <Box sx={{ minWidth: 0 }}>
-            <Typography variant="caption" noWrap sx={{ fontWeight: 600, display: 'block' }}>{user.name}</Typography>
-            <Typography variant="caption" color="text.secondary" noWrap sx={{ fontSize: '0.7rem', display: 'block' }}>{t(ROLE_LABELS[user.role] ?? user.role)}</Typography>
+            <Typography variant="caption" noWrap sx={{ fontWeight: 600, display: 'block' }}>{user.fullName}</Typography>
+            <Typography variant="caption" color="text.secondary" noWrap sx={{ fontSize: '0.7rem', display: 'block' }}>{t(user.roleName)}</Typography>
           </Box>
         )}
       </Box>

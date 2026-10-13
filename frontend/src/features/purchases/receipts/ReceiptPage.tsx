@@ -117,26 +117,16 @@ export default function ReceiptPage() {
 
   const handleSave = async (status: 'draft' | 'confirmed') => {
     if (!isValid || saving) return
-    const supplier = suppliers.find((s) => s.id === supplierId)
-    const warehouse = warehouses.find((w) => w.id === effectiveWarehouseId)
     const validRows = rows.filter((r) => r.productId && r.qty > 0 && r.costPrice > 0)
     setSaving(true)
     try {
       await dispatch(createPurchase({
         date: date.toISOString(),
         supplierId,
-        supplierName: supplier?.name || '',
         warehouseId: effectiveWarehouseId,
-        warehouseName: warehouse?.name || '',
-        items: validRows.map((r) => ({
-          productId: r.productId, productName: r.productName, unit: r.unit, qty: r.qty,
-          price: r.costPrice, discount: 0, sum: r.total, salePrice: r.salePrice,
-        })),
-        status,
-        total: totalCost,
-        paid: 0,
-        balance: totalCost,
-        notes,
+        items: validRows.map((r) => ({ productId: r.productId, qty: r.qty, price: r.costPrice, salePrice: r.salePrice || undefined })),
+        confirm: status === 'confirmed',
+        notes: notes || undefined,
       }))
       dispatch(notify({ message: t('Kirim saqlandi') }))
       navigate('/purchases/orders')

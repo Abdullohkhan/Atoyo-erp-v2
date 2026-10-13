@@ -48,7 +48,7 @@ export default function ProductsPage() {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const { items: products, loading } = useAppSelector((s) => s.products)
-  const canWrite = useCan('products.write')
+  const canWrite = useCan('products.manage')
 
   useEffect(() => { dispatch(fetchProducts()) }, [dispatch])
 

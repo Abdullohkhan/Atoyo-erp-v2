@@ -33,7 +33,7 @@ export default function EmployeesPage() {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const { items, loading } = useAppSelector((s) => s.employees)
-  const canWrite = useCan('employees.write')
+  const canWrite = useCan('employees.manage')
   useEffect(() => { dispatch(fetchEmployees()) }, [dispatch])
 
   const cat = useCatalog<Employee>({

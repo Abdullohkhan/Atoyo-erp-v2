@@ -10,6 +10,7 @@ export interface Product {
   price: number
   costPrice: number
   barcode?: string
+  tnvedCode?: string | null
   description?: string
   isActive: boolean
   createdAt: string

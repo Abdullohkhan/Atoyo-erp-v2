@@ -29,7 +29,7 @@ export default function WarehousesPage() {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const { items, loading } = useAppSelector((s) => s.warehouses)
-  const canWrite = useCan('warehouses.write')
+  const canWrite = useCan('warehouses.manage')
   useEffect(() => { dispatch(fetchWarehouses()) }, [dispatch])
 
   const cat = useCatalog<Warehouse>({

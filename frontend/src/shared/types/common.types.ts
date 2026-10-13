@@ -35,8 +35,9 @@ export interface StockBalance {
   qty: number
   reservedQty: number
   availableQty: number
-  costPrice: number
-  totalValue: number
+  /** Only for users with costs.view */
+  costPrice?: number
+  totalValue?: number
 }
 
 export type ThemeMode = 'light' | 'dark'

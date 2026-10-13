@@ -5,7 +5,7 @@ import { Box, Chip } from '@mui/material'
 import AnimatedPage from '@/shared/components/AnimatedPage/AnimatedPage'
 import PageHeader from '@/shared/components/PageHeader/PageHeader'
 import DataTable from '@/shared/components/DataTable/DataTable'
-import { useAppDispatch, useAppSelector } from '@/app/hooks'
+import { useAppDispatch, useAppSelector, useCan } from '@/app/hooks'
 import { fetchBalance } from '@/features/warehouse/balance/store/balanceSlice'
 import type { StockBalance } from '@/shared/types/common.types'
 import { formatCurrency, formatNumber } from '@/shared/utils/formatters'
@@ -26,9 +26,10 @@ export default function StockReportPage() {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const { items, loading } = useAppSelector((s) => s.balance)
-  const columns = useMemo(() => makeColumns(), [])
+  const showCost = useCan('costs.view')
+  const columns = useMemo(() => makeColumns().filter((c) => showCost || !['costPrice', 'totalValue'].includes(String(c.id))), [showCost])
   useEffect(() => { dispatch(fetchBalance()) }, [dispatch])
-  const totalValue = items.reduce((s, b) => s + b.totalValue, 0)
+  const totalValue = items.reduce((s, b) => s + (b.totalValue ?? 0), 0)
   const lowStock = items.filter(b => b.availableQty <= LOW_STOCK_LIMIT).length
   return (
     <AnimatedPage>

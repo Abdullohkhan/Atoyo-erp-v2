@@ -23,7 +23,7 @@ export default function MovementsPage() {
   const { items, loading } = useAppSelector((s) => s.movements)
   const balance = useAppSelector((s) => s.balance.items)
   const warehouses = useAppSelector((s) => s.warehouses.items)
-  const canCreate = useCan('movements.create')
+  const canCreate = useCan('stock.move')
   const { busy, run } = useAction()
   const [open, setOpen] = useState(false)
   const [type, setType] = useState<'transfer' | 'writeoff'>('transfer')
@@ -45,13 +45,9 @@ export default function MovementsPage() {
 
   const submit = async () => {
     if (!selected) return
-    const from = warehouses.find((w) => w.id === fromId)
-    const to = warehouses.find((w) => w.id === toId)
     const ok = await run(() => dispatch(createStockMovement({
-      type, fromWarehouseId: fromId, fromWarehouseName: from?.name ?? '',
-      toWarehouseId: type === 'transfer' ? toId : undefined, toWarehouseName: type === 'transfer' ? to?.name : undefined,
-      item: { productId: selected.productId, productName: selected.productName, unit: selected.unit, qty: qtyNum, price: selected.costPrice, discount: 0, sum: qtyNum * selected.costPrice },
-      notes,
+      type, fromWarehouseId: fromId, toWarehouseId: type === 'transfer' ? toId : undefined,
+      productId: selected.productId, qty: qtyNum, notes: notes || undefined,
     })), 'Harakat saqlandi')
     if (ok) { setOpen(false); reset() }
   }

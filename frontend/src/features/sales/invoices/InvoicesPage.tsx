@@ -30,9 +30,13 @@ export default function InvoicesPage() {
   const [docKey, setDocKey] = useState('')
   const [dueDate, setDueDate] = useState(dayjs().add(14, 'day').format('YYYY-MM-DD'))
 
+  const canSales = useCan('sales.view')
+  const canPurchases = useCan('purchases.view')
   useEffect(() => {
-    dispatch(fetchInvoices()); dispatch(fetchSaleOrders()); dispatch(fetchPurchaseOrders())
-  }, [dispatch])
+    dispatch(fetchInvoices())
+    if (canSales) dispatch(fetchSaleOrders())
+    if (canPurchases) dispatch(fetchPurchaseOrders())
+  }, [dispatch, canSales, canPurchases])
 
   // Confirmed documents that do not have an invoice yet.
   const candidates = useMemo(() => {

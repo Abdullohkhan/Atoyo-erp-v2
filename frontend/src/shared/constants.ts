@@ -19,7 +19,6 @@ export const MOVEMENT_TYPES: Record<string, string> = {
   receipt: 'Kirim', dispatch: 'Chiqim', transfer: "Ko'chirish", writeoff: 'Hisobdan chiqarish', adjustment: 'Tuzatish',
 }
 
-export const ROLE_LABELS: Record<string, string> = { owner: 'Direktor', seller: 'Sotuvchi', accountant: 'Moliyachi' }
 
 /** Stock at or below this quantity is shown as "low". */
 export const LOW_STOCK_LIMIT = 10

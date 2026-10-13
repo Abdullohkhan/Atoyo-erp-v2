@@ -26,7 +26,7 @@ interface Props {
 
 export default function ProductSearchModal({ open, onClose, onSelect }: Props) {
   const { t } = useTranslation()
-  const showCost = useCan('finance.view')
+  const showCost = useCan('costs.view')
   const [query, setQuery] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
   const products = useAppSelector((s) => s.products.items)

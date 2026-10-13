@@ -12,5 +12,5 @@ export default defineConfig({
       "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
-  server: { port: 5173 },
+  server: { port: 5173, proxy: { '/api': process.env.API_PROXY ?? 'http://localhost:3001' } },
 });
