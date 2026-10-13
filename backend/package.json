@@ -8,7 +8,7 @@
     "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput & node --watch --env-file-if-exists=.env dist/src/main.js",
     "start": "node dist/src/main.js",
     "lint": "eslint . && tsc --noEmit",
-    "test": "tsc -p tsconfig.json && node --env-file-if-exists=.env.test --test --test-concurrency=1 dist/test/",
+    "test": "tsc -p tsconfig.json && env $(grep -v '^#' .env.test | xargs) sh -c 'prisma migrate deploy >/dev/null && node --test --test-concurrency=1 --test-reporter=spec dist/test/*.e2e.js'",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate deploy",
     "db:migrate:dev": "prisma migrate dev",
