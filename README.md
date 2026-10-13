@@ -1,66 +1,64 @@
-# Atoyo ERP
+# Atoyo ERP + CRM
 
-1C uslubidagi ERP tizimi: kataloglar, savdo, xarid, ombor, moliya va hisobotlar.
-Frontend: React 19 + TypeScript + Vite + MUI + Redux Toolkit. Hozircha backend o'rnida `json-server` (`db.json`) ishlaydi.
+Kompyuter va komplektlovchi buyurtmalarini boshqarish tizimi ("Ombor CRM" jarayoni) va unga ulangan ERP: kataloglar, ombor, savdo, xarid, moliya, hisobotlar.
 
 Muallif: [Abdullohkhan](https://t.me/Abdulloh_77700) · [abdulmajidsharipovlc@gmail.com](mailto:abdulmajidsharipovlc@gmail.com)
 
-## Ishga tushirish
+## Tuzilma (monorepo)
+
+```
+backend/    NestJS 12 + Prisma 7 + PostgreSQL — REST API (/api), JWT, rollar, biznes jarayon
+frontend/   React 19 + Vite 8 + MUI 9 + Redux Toolkit — interfeys (uz / ru / en, dark / light)
+docs/       ROLES.md (rollar va jarayon), API.md (endpointlar), BACKEND.md (arxitektura)
+docker-compose.yml   PostgreSQL + API + nginx (frontend)
+```
+
+## Tez ishga tushirish (Docker)
+
+```bash
+cp .env.example .env        # parollar va maxfiy kalitlarni o'zgartiring
+docker compose up --build   # http://localhost:8080
+```
+Birinchi ishga tushishda `SEED_OWNER_USERNAME` / `SEED_OWNER_PASSWORD` bilan **Owner** yaratiladi.
+
+## Dasturchi uchun (lokal)
+
+Kerak: Node.js 22+, PostgreSQL 16.
 
 ```bash
 npm install
-npm run dev        # vite (5173) + json-server (3001) birga
+cp backend/.env.example backend/.env      # DATABASE_URL, JWT_* ni sozlang
+npm run build -w backend && npm run db:setup   # migratsiya + seed (rollar, owner, demo ma'lumot)
+npm run dev                                    # API :3001 + frontend :5173 (Vite /api ni proksi qiladi)
 ```
 
-Boshqa buyruqlar: `npm run lint`, `npm test`, `npm run typecheck`, `npm run build`.
-API manzilini `.env` faylida `VITE_API_URL` bilan o'zgartirish mumkin (`.env.example`).
+| Buyruq | Nima qiladi |
+|---|---|
+| `npm run dev` | backend (watch) + frontend birga |
+| `npm test` | backend e2e (alohida test bazasi, `backend/.env.test`) + frontend unit testlar |
+| `npm run lint` | ESLint + TypeScript ikkala qismda |
+| `npm run build` | production build |
+| `npm run db:migrate:dev -w backend` | sxema o'zgarganda yangi migratsiya |
 
-> `npm run dev` ishlaganda `json-server` `db.json` ni **o'zgartiradi**. Toza holatga qaytarish: `git checkout db.json`.
+Swagger: `http://localhost:3001/api/docs`.
 
-## Demo hisoblar (faqat dev rejimida login sahifasida ko'rinadi)
+### Demo hisoblar (`SEED_DEMO` yoqilganda, parol `Demo12345`)
 
-| Rol | Login | Parol |
-|---|---|---|
-| Direktor | `admin` | `admin123` |
-| Sotuvchi | `seller1` | `seller123` |
-| Moliyachi | `accountant` | `acc123` |
+`admin`, `director`, `seller1` (sotuvchi), `engineer` (injener), `declarant` (deklarant), `supply` (ta'minotchi), `accountant` (buxgalter), `storekeeper` (omborchi). Owner: `owner` / `.env` dagi parol.
 
-## Rollar va ruxsatlar
+## Asosiy jarayon — zayavka
 
-Barcha qoidalar bitta joyda: `src/app/permissions.ts` (sahifalar `ROUTE_ACCESS`, tugmalar `ACTION_ACCESS`).
+Sotuvchi zayavka ochadi → **injener** konfiguratsiya qiladi (katalogda yo'q tovar qizil) → **deklarant** TN VED, boj, QQS, sertifikat, logistika bilan tannarxni hisoblaydi → **narx ko'rib chiqiladi** (ustama) → **buyurtmachi tasdiqlaydi** → **shartnoma** (shablondan, PDF/chop etish) → **avans** (standart 30%, kelmaguncha ish boshlanmaydi, buxgalter tasdiqlaydi) → **ta'minot** (yetkazuvchi, haqiqiy narx, logistika) → **buxgalter tasdiqlaydi** → **omborga qabul** → **injener ombordan olib yig'adi** → **dalolatnoma (akt)** → **yetkazib berish**.
 
-| Bo'lim | Direktor | Sotuvchi | Moliyachi |
-|---|:-:|:-:|:-:|
-| Dashboard, mahsulotlar, mijozlar, omborlar, savdo buyurtmalari, fakturalar, qoldiq, harakat | ✅ | ✅ | ✅ |
-| Mahsulot / ombor yaratish, tahrirlash | ✅ | — | — |
-| Mijoz tahrirlash, yangi savdo, buyurtmani tasdiqlash | ✅ | ✅ | — |
-| Yetkazuvchilar, xarid, kirim (yuk keldi), faktura yaratish | ✅ | — | ✅ |
-| To'lovlar, hisobotlar | ✅ | — | ✅ |
-| Xodimlar (maosh) | ✅ | — | — |
-| Tovar harakati yaratish, tasdiqlangan hujjatni bekor qilish | ✅ | — | — |
+Har bosqichda faqat mas'ul rol amal bajaradi; bosqich o'zgarganda o'sha rol xodimlariga bildirishnoma boradi. Injener narxlarni umuman ko'rmaydi. Batafsil: [docs/ROLES.md](docs/ROLES.md).
 
-Sotuvchiga tannarx ko'rsatilmaydi.
+## Rollar
 
-## Biznes mantiq (`src/shared/services/operations.ts`)
+Owner — eng yuqori rol: barcha ruxsatlar unda va faqat u **Boshqaruv → Rollar va ruxsatlar** sahifasida boshqa rollarning ruxsatlarini o'zgartira oladi, yangi rol yarata oladi. Qolgan rollar: Admin, Direktor, Sotuvchi, Injener, Deklarant, Ta'minotchi, Buxgalter, Omborchi.
 
-- **Savdo buyurtmasini tasdiqlash:** ombor qoldig'i kamayadi, "chiqim" harakati yoziladi, faktura yaratiladi, mijoz qarzi oshadi. Qoldiq yetmasa rad etiladi.
-- **Xarid (yuk keldi) tasdiqlash:** qoldiq oshadi (o'rtacha tannarx qayta hisoblanadi), mahsulot narxlari yangilanadi, faktura va yetkazuvchi qarzi yoziladi.
-- **To'lov:** mijoz/yetkazuvchi tanlansa, summa ochiq hujjatlarga eskisidan boshlab taqsimlanadi (hujjat, faktura, qarz yangilanadi).
-- **Bekor qilish:** qoldiq va qarz qaytariladi. To'lov qilingan hujjatni bekor qilib bo'lmaydi.
-- Hozir bu amallar bir nechta so'rov bilan bajariladi (tranzaksiya yo'q). Haqiqiy backend'da bitta tranzaksiyali endpoint bo'lishi kerak — `docs/BACKEND.md`.
+## Xavfsizlik
 
-## Tillar va rejimlar
-
-- Til: O'zbekcha / Русский / English (yuqoridagi panel, `localStorage` da saqlanadi). Matn kaliti — o'zbekcha matnning o'zi; tarjimalar `src/i18n/locales/`. Dev rejimida tarjimasiz kalitlar `window.__missingKeys` ga yig'iladi.
-- Dark / light rejim (yuqoridagi tugma).
-- Telefon uchun moslashgan: jadvallar kartochkaga aylanadi, yon panel drawer bo'ladi.
-
-## Tuzilma
-
-```
-src/
-  app/        store, router, ruxsatlar, ui (toast) slice
-  features/   modul bo'yicha: catalogs, sales, purchases, warehouse, finance, reports, dashboard, auth
-  shared/     komponentlar (DataTable, CrudDialog, ...), services (calc, stats, operations), utils
-  i18n/       i18next sozlamasi va tarjimalar
-```
+- Parollar bcrypt bilan, refresh token SHA-256 bilan saqlanadi; access token 15 daqiqa, refresh 7 kun (rotatsiya).
+- Har bir endpoint ruxsat bilan himoyalangan; narx/tannarx ruxsati yo'q foydalanuvchiga **server** yubormaydi.
+- Ombor, qarz, faktura o'zgarishlari bitta tranzaksiyada; qoldiq qatorlari `FOR UPDATE` bilan bloklanadi.
+- Login urinishlari cheklangan (5 ta xato → 5 daqiqa), Helmet, CORS, audit jurnali.
